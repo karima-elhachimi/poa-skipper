@@ -19,6 +19,7 @@ const stormglassHost = 'http://api.stormglass.io'
 const stormGlassApi = '38116ef6-44b8-11e9-8f0d-0242ac130004-38117022-44b8-11e9-8f0d-0242ac130004';
 const nomiHost = 'http://nominatim.openstreetmap.org';
 
+//dialogflow
 exports.dfApp = functions.https.onRequest((request, response) => {
   const agent = new WebhookClient({ request: request, response: response })
   //console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers))

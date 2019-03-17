@@ -68,10 +68,10 @@ app.post('/dialogflow', express.json(), (request, response) => {
   agent.handleRequest(intentMap);
 })
 
-function respondWithNauticalWeatherData (dfRequest, agent) {
+function respondWithNauticalWeatherData (agent) {
   console.log('function respondWithNauticalWeatherData started')
 
-  let city = dfRequest.body.queryResult.parameters['paramLocatie']
+  let city = agent.request.body.queryResult.parameters['paramLocatie']
   console.log(`city: ${city}`)
   agent.add(`Momentje, ik ben de nautische weergegevens voor ${city} aan het zoeken...`)
   let latlon = [];
