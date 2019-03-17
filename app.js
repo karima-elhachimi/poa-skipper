@@ -15,11 +15,7 @@ process.env.DEBUG = 'dialogflow:debug' // enables lib debugging statements
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 admin.initializeApp()
 
-// api's
-const stormglassHost = 'http://api.stormglass.io'
-const stormGlassApi = '38116ef6-44b8-11e9-8f0d-0242ac130004-38117022-44b8-11e9-8f0d-0242ac130004'
 
-const nomiHost = 'http://nominatim.openstreetmap.org';
 
 app.get('/', (req, res) => res.send('online'))
 
@@ -27,6 +23,12 @@ app.post('/dialogflow', express.json(), (request, response) => {
   const agent = new WebhookClient({ request: request, response: response })
   //console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers))
   //console.log('Dialogflow Request body: ' + JSON.stringify(request.body))
+
+  // api
+  const stormglassHost = 'http://api.stormglass.io'
+  const nomiHost = 'http://nominatim.openstreetmap.org';
+  //keys
+  const stormGlassApi = '38116ef6-44b8-11e9-8f0d-0242ac130004-38117022-44b8-11e9-8f0d-0242ac130004'
 
   function welcome (agent) {
     agent.add(`Welcome to my agent!`)
@@ -80,6 +82,7 @@ function respondWithNauticalWeatherData (agent) {
     .then(latlon => {
       //url samenstellen voor het zoeken
       let nauticalWeatherParams = "airTemperature,windSpeed" //https://docs.stormglass.io/#point-request
+      //todo: nautical weather params maken op basis van params uit df
       let path = createNauticalSearchPath(latlon[0], latlon[1], nauticalWeatherParams)
 
       let url = getFullUrl(path, stormglassHost).toString();
@@ -90,13 +93,8 @@ function respondWithNauticalWeatherData (agent) {
           'Content-Type': 'application/json'
         }
       })
-
     })
-
-
 }
-
-
 
 function requestLatandLonData(location) {
   let url = getFullUrl(createLatAndLongSearchParams(location), nomiHost);
@@ -128,6 +126,15 @@ function createNauticalSearchPath (lat, lon, params) {
   return `/point?lat=${lat}&lng=${lon}&source=sg&params=${params}`
 }
 
+function createNauticalParams(...params) {
+  let paramString;
+  for (let i = 0; i < params; i++) {
+    paramString += `, ${params[i]}`
+  }
+
+  return params;
+}
+
 function createLatAndLongSearchParams (city) {
   return `/search?q=${city}&format=json&limit=1`;
 }
@@ -139,6 +146,5 @@ function formatWeatherForecast(forecastData) {
           windkracht: ${wk} meter per seconde.
   `
 }
-// app.listen(process.env.PORT || 8080)
 
 module.exports = app
