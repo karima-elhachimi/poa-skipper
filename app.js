@@ -15,20 +15,20 @@ process.env.DEBUG = 'dialogflow:debug' // enables lib debugging statements
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 admin.initializeApp()
 
-
+// api
+const stormglassHost = 'http://api.stormglass.io'
+const nomiHost = 'http://nominatim.openstreetmap.org';
+//keys
+const stormGlassApi = '38116ef6-44b8-11e9-8f0d-0242ac130004-38117022-44b8-11e9-8f0d-0242ac130004'
 
 app.get('/', (req, res) => res.send('online'))
 
 app.post('/dialogflow', express.json(), (request, response) => {
-  const agent = new WebhookClient({ request: request, response: response })
-  //console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers))
-  //console.log('Dialogflow Request body: ' + JSON.stringify(request.body))
+  let agent = new WebhookClient({ request: request, response: response });
+  console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers))
+  console.log('Dialogflow Request body: ' + JSON.stringify(request.body))
 
-  // api
-  const stormglassHost = 'http://api.stormglass.io'
-  const nomiHost = 'http://nominatim.openstreetmap.org';
-  //keys
-  const stormGlassApi = '38116ef6-44b8-11e9-8f0d-0242ac130004-38117022-44b8-11e9-8f0d-0242ac130004'
+
 
   function welcome (agent) {
     agent.add(`Welcome to my agent!`)
@@ -40,22 +40,20 @@ app.post('/dialogflow', express.json(), (request, response) => {
   }
 
   function nauticalForecast (agent) {
-    return respondWithNauticalWeatherData(request, agent)
+    return respondWithNauticalWeatherData(agent)
       .then(nautischeData => {
-
         console.log(`json parse data: ${JSON.stringify(nautischeData.data.hours[0])}`)
-        let text = formatWeatherForecast(JSON.parse(JSON.stringify(nautischeData.data.hours[0])));
+        let text = formatWeatherForecast(nautischeData.data.hours[0]);
         agent.add(text)
       }).catch(er => agent.add(`something went wrong: ${er}`))
   }
 
   function allExecutions(agent) {
-    requestLatandLon('antwerpen');
-    let lock = request.body.queryResult.parameters['paramSluis']
+    let lock = agent.parameters.paramSluis;
     agent.add(`Ik antwoord binnenkort met alle schuttingen voor ${lock}`);
   }
   function executionDetails(agent) {
-    let lock = request.body.queryResult.parameters['paramSluis']
+    let lock = agent.parameters.paramSluis;
     agent.add(`Ik antwoord binnenkort met schutting details voor ${lock}`);
   }
 
@@ -116,10 +114,10 @@ function createNauticalParams(...params) {
   return params;
 }
 
-function respondWithNauticalWeatherData (agent) {
-  console.log('function respondWithNauticalWeatherData started')
-
-  let city = agent.request.body.queryResult.parameters['paramLocatie']
+function respondWithNauticalWeatherData (agent, req){
+  console.log('function respondWithNauticalWeatherData started');
+  console.log(agent.parameters);
+  let city = agent.parameters.paramLocatie;
   console.log(`city: ${city}`)
   agent.add(`Momentje, ik ben de nautische weergegevens voor ${city} aan het zoeken...`)
   let latlon = [];
