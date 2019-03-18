@@ -18,15 +18,17 @@ admin.initializeApp()
 // api
 const stormglassHost = 'http://api.stormglass.io'
 const nomiHost = 'http://nominatim.openstreetmap.org';
+//mock api voor apics
+const apicsHost = 'http://demo5740953.mockable.io';
 //keys
 const stormGlassApi = '38116ef6-44b8-11e9-8f0d-0242ac130004-38117022-44b8-11e9-8f0d-0242ac130004'
 
 app.get('/', (req, res) => res.send('online'))
 
-app.post('/dialogflow', express.json(), (request, response) => {
+app.post('/fulfillment', express.json(), (request, response) => {
   let agent = new WebhookClient({ request: request, response: response });
-  console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers))
-  console.log('Dialogflow Request body: ' + JSON.stringify(request.body))
+  //console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers))
+  //console.log('Dialogflow Request body: ' + JSON.stringify(request.body))
 
 
 
@@ -50,7 +52,20 @@ app.post('/dialogflow', express.json(), (request, response) => {
 
   function allExecutions(agent) {
     let lock = agent.parameters.paramSluis;
-    agent.add(`Ik antwoord binnenkort met alle schuttingen voor ${lock}`);
+    //agent.add(`Ik antwoord binnenkort met alle schuttingen voor ${lock}`);
+    return requestLockExecutions(lock)
+      .then(res => {
+        console.log(`request all executions response: ${res}`);
+
+      }).catch(er => agent.add(`Het ophalen van de schuttingen voor ${lock} is mislukt. error: ${er}`));
+  }
+
+  function allLocks(agent) {
+    return requestAllLocks()
+      .then(res => {
+        console.log(`request all locks response: ${res}`);
+        agent.add(`alle sluizen werden opgehaald: ${res}`);
+      }, er => console.log(er)).catch(err => agent.add(`Er is iets misgegaan bij het ophalen van de sluizen. error: ${err}`));
   }
   function executionDetails(agent) {
     let lock = agent.parameters.paramSluis;
@@ -63,6 +78,7 @@ app.post('/dialogflow', express.json(), (request, response) => {
   intentMap.set('Default Fallback Intent', fallback);
   intentMap.set('nautisch.algemeen', nauticalForecast);
   intentMap.set('sluis.schuttingen', allExecutions);
+  intentMap.set('sluis.toestand.algemeen - yes', allLocks);
   intentMap.set('sluis.schutting.details', executionDetails)
 
   agent.handleRequest(intentMap);
@@ -82,6 +98,7 @@ function createLatAndLongSearchParams (city) {
 
 function requestLatandLonData(location) {
   let url = getFullUrl(createLatAndLongSearchParams(location), nomiHost);
+
   return axios.get(url.toString())
     .then(res => {
       console.log(`lat lon response: ${JSON.parse(res.data[0].lat)}`);
@@ -148,18 +165,41 @@ function formatWeatherForecast(forecastData) {
   `
 }
 
-function createGetLockPath(lockname) {
-  //todo: maak een mock path
-  console.log('lock path:');
+function getLockCode (lockname) {
+  //todo: uitwerken mapping tussen sluisnaam en sluidcode
+  return `ZAS`;
 }
 
-function requestLock(url){
-  return {"lockName": "Berendrechtsluis", "countOfSeaships": 2};
+function createGetLockExecutionsPath(lockname) {
+  let code = getLockCode(lockname);
+  return `/apics/lockexecutions/${code}`;
 }
 
-function respondWithLockInformation(agent){
-  //todo: respondWithLockInformation
+function createGetLockExecutionPath(executionId) {
+  return `/apics/lockexecution/${executionId}`;
 }
 
+function createGetLocksPath(){
+  return `/apics/locks`;
+}
 
+function createGetLockPath(lockId){
+  return `/apics/lock/${lockId}`;
+}
+function requestApicsData(url, path){
+  let fullUrl = getFullUrl(path, url);
+
+  console.log(`all locks url: ${fullUrl}`);
+  return axios.get(url);
+}
+
+function requestAllLocks(){
+  console.log(`request all locks started`);
+  let path = createGetLocksPath();
+  return requestApicsData(apicsHost, path)
+}
+
+function requestLockExecutions(lock){
+
+}
 module.exports = app
