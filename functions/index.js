@@ -18,7 +18,8 @@ admin.initializeApp()
 // api
 const stormglassHost = 'http://api.stormglass.io'
 const nomiHost = 'http://nominatim.openstreetmap.org';
-const apicsMockHost = '';
+//mock api voor apics
+const apicsHost = 'http://6b8d26be.ngrok.io:';
 //keys
 const stormGlassApi = '38116ef6-44b8-11e9-8f0d-0242ac130004-38117022-44b8-11e9-8f0d-0242ac130004'
 
@@ -148,10 +149,21 @@ function formatWeatherForecast(forecastData) {
   `
 }
 
-function createGetLockPath(lockname) {
-  //todo: maak een mock path
-  console.log('lock path:');
+function getLockCode (lockname) {
+  //todo: uitwerken mapping tussen sluisnaam en sluidcode
+  return `ZAS`;
 }
+
+function createGetLockExecutionsPath(lockname) {
+
+  let code = getLockCode(lockname);
+  return `/apics/lockexecutions/${code}`;
+}
+
+function createGetLockExecution(executionId) {
+  return `/apics/lockexecution/${executionId}`;
+}
+
 
 function requestLock(url){
   return {"lockName": "Berendrechtsluis", "countOfSeaships": 2};
