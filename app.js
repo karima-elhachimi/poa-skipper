@@ -63,12 +63,58 @@ app.post('/dialogflow', express.json(), (request, response) => {
   let intentMap = new Map()
   intentMap.set('Default Welcome Intent', welcome);
   intentMap.set('Default Fallback Intent', fallback);
-  intentMap.set('Nautisch.algemeen', nauticalForecast);
+  intentMap.set('nautisch.algemeen', nauticalForecast);
   intentMap.set('sluis.schuttingen', allExecutions);
   intentMap.set('sluis.schutting.details', executionDetails)
 
   agent.handleRequest(intentMap);
 })
+
+
+function getFullUrl (path, host) {
+  let url = new URL(path, host);
+  console.log(`fullURL: ${url}`);
+  return url;
+}
+
+
+function createLatAndLongSearchParams (city) {
+  return `/search?q=${city}&format=json&limit=1`;
+}
+
+function requestLatandLonData(location) {
+  let url = getFullUrl(createLatAndLongSearchParams(location), nomiHost);
+  return axios.get(url.toString())
+    .then(res => {
+      console.log(`lat lon response: ${JSON.parse(res.data[0].lat)}`);
+      return [JSON.parse(res.data[0].lat), JSON.parse(res.data[0].lon)];
+    });
+}
+
+
+function requestNauticalWeatherData (url) {
+  console.log('creating axios request for ' + url)
+  let config = {
+    headers: {
+      'Authorization': stormGlassApi,
+      'Content-Type': 'application/json'
+    }
+  }
+  return axios.get(url, config)
+}
+
+function createNauticalSearchPath (lat, lon, params) {
+  return `/point?lat=${lat}&lng=${lon}&source=sg&params=${params}`
+}
+
+function createNauticalParams(...params) {
+  let paramString;
+  for (let i = 0; i < params; i++) {
+    paramString += `, ${params[i]}`
+  }
+
+  return params;
+}
 
 function respondWithNauticalWeatherData (agent) {
   console.log('function respondWithNauticalWeatherData started')
@@ -96,49 +142,6 @@ function respondWithNauticalWeatherData (agent) {
     })
 }
 
-function requestLatandLonData(location) {
-  let url = getFullUrl(createLatAndLongSearchParams(location), nomiHost);
-  return axios.get(url.toString())
-    .then(res => {
-      console.log(`lat lon response: ${JSON.parse(res.data[0].lat)}`);
-      return [JSON.parse(res.data[0].lat), JSON.parse(res.data[0].lon)];
-    });
-}
-
-function requestNauticalWeatherData (url) {
-  console.log('creating axios request for ' + url)
-  let config = {
-    headers: {
-      'Authorization': stormGlassApi,
-      'Content-Type': 'application/json'
-    }
-  }
-  return axios.get(url, config)
-}
-
-function getFullUrl (path, host) {
-  let url = new URL(path, host);
-  console.log(`fullURL: ${url}`);
-  return url;
-}
-
-function createNauticalSearchPath (lat, lon, params) {
-  return `/point?lat=${lat}&lng=${lon}&source=sg&params=${params}`
-}
-
-function createNauticalParams(...params) {
-  let paramString;
-  for (let i = 0; i < params; i++) {
-    paramString += `, ${params[i]}`
-  }
-
-  return params;
-}
-
-function createLatAndLongSearchParams (city) {
-  return `/search?q=${city}&format=json&limit=1`;
-}
-
 function formatWeatherForecast(forecastData) {
   let temp = forecastData.airTemperature[0].value;
   let wk = forecastData.windSpeed[0].value;
@@ -146,5 +149,19 @@ function formatWeatherForecast(forecastData) {
           windkracht: ${wk} meter per seconde.
   `
 }
+
+function createGetLockPath(lockname) {
+  //todo: maak een mock path
+  console.log('lock path:');
+}
+
+function requestLock(url){
+  return {"lockName": "Berendrechtsluis", "countOfSeaships": 2};
+}
+
+function respondWithLockInformation(agent){
+  //todo: respondWithLockInformation
+}
+
 
 module.exports = app

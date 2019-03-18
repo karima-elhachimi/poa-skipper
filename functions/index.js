@@ -14,16 +14,17 @@ const admin = require('firebase-admin')
 process.env.DEBUG = 'dialogflow:debug' // enables lib debugging statements
 admin.initializeApp()
 
-// api's
-const stormglassHost = 'http://api.stormglass.io'
-const stormGlassApi = '38116ef6-44b8-11e9-8f0d-0242ac130004-38117022-44b8-11e9-8f0d-0242ac130004';
-const nomiHost = 'http://nominatim.openstreetmap.org';
-
 //dialogflow
 exports.dfApp = functions.https.onRequest((request, response) => {
   const agent = new WebhookClient({ request: request, response: response })
   //console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers))
   //console.log('Dialogflow Request body: ' + JSON.stringify(request.body))
+
+  // api
+  const stormglassHost = 'http://api.stormglass.io'
+  const nomiHost = 'http://nominatim.openstreetmap.org';
+  //keys
+  const stormGlassApi = '38116ef6-44b8-11e9-8f0d-0242ac130004-38117022-44b8-11e9-8f0d-0242ac130004'
 
   function welcome (agent) {
     agent.add(`Welcome to my agent!`)
@@ -58,42 +59,24 @@ exports.dfApp = functions.https.onRequest((request, response) => {
   let intentMap = new Map()
   intentMap.set('Default Welcome Intent', welcome);
   intentMap.set('Default Fallback Intent', fallback);
-  intentMap.set('Nautisch.algemeen', nauticalForecast);
+  intentMap.set('nautisch.algemeen', nauticalForecast);
   intentMap.set('sluis.schuttingen', allExecutions);
   intentMap.set('sluis.schutting.details', executionDetails)
 
   agent.handleRequest(intentMap);
 })
 
-function respondWithNauticalWeatherData (dfRequest, agent) {
-  console.log('function respondWithNauticalWeatherData started')
 
-  let city = dfRequest.body.queryResult.parameters['paramLocatie']
-  console.log(`city: ${city}`)
-  agent.add(`Momentje, ik ben de nautische weergegevens voor ${city} aan het zoeken...`)
-  let latlon = [];
-  //eerst latitude en longitude ophalen
-  return requestLatandLonData(city)
-    .then(latlon => {
-      //url samenstellen voor het zoeken
-      let nauticalWeatherParams = "airTemperature,windSpeed" //https://docs.stormglass.io/#point-request
-      let path = createNauticalSearchPath(latlon[0], latlon[1], nauticalWeatherParams)
-
-      let url = getFullUrl(path, stormglassHost).toString();
-      return axios.get(url, {
-        headers: {
-
-          'Authorization': stormGlassApi,
-          'Content-Type': 'application/json'
-        }
-      })
-
-    })
-
-
+function getFullUrl (path, host) {
+  let url = new URL(path, host);
+  console.log(`fullURL: ${url}`);
+  return url;
 }
 
 
+function createLatAndLongSearchParams (city) {
+  return `/search?q=${city}&format=json&limit=1`;
+}
 
 function requestLatandLonData(location) {
   let url = getFullUrl(createLatAndLongSearchParams(location), nomiHost);
@@ -103,6 +86,7 @@ function requestLatandLonData(location) {
       return [JSON.parse(res.data[0].lat), JSON.parse(res.data[0].lon)];
     });
 }
+
 
 function requestNauticalWeatherData (url) {
   console.log('creating axios request for ' + url)
@@ -115,18 +99,43 @@ function requestNauticalWeatherData (url) {
   return axios.get(url, config)
 }
 
-function getFullUrl (path, host) {
-  let url = new URL(path, host);
-  console.log(`fullURL: ${url}`);
-  return url;
-}
-
 function createNauticalSearchPath (lat, lon, params) {
   return `/point?lat=${lat}&lng=${lon}&source=sg&params=${params}`
 }
 
-function createLatAndLongSearchParams (city) {
-  return `/search?q=${city}&format=json&limit=1`;
+function createNauticalParams(...params) {
+  let paramString;
+  for (let i = 0; i < params; i++) {
+    paramString += `, ${params[i]}`
+  }
+
+  return params;
+}
+
+function respondWithNauticalWeatherData (agent) {
+  console.log('function respondWithNauticalWeatherData started')
+
+  let city = agent.request.body.queryResult.parameters['paramLocatie']
+  console.log(`city: ${city}`)
+  agent.add(`Momentje, ik ben de nautische weergegevens voor ${city} aan het zoeken...`)
+  let latlon = [];
+  //eerst latitude en longitude ophalen
+  return requestLatandLonData(city)
+    .then(latlon => {
+      //url samenstellen voor het zoeken
+      let nauticalWeatherParams = "airTemperature,windSpeed" //https://docs.stormglass.io/#point-request
+      //todo: nautical weather params maken op basis van params uit df
+      let path = createNauticalSearchPath(latlon[0], latlon[1], nauticalWeatherParams)
+
+      let url = getFullUrl(path, stormglassHost).toString();
+      return axios.get(url, {
+        headers: {
+
+          'Authorization': stormGlassApi,
+          'Content-Type': 'application/json'
+        }
+      })
+    })
 }
 
 function formatWeatherForecast(forecastData) {
@@ -135,4 +144,17 @@ function formatWeatherForecast(forecastData) {
   return `temperatuur: ${temp} graden celcius
           windkracht: ${wk} meter per seconde.
   `
+}
+
+function createGetLockPath(lockname) {
+  //todo: maak een mock path
+  console.log('lock path:');
+}
+
+function requestLock(url){
+  return {"lockName": "Berendrechtsluis", "countOfSeaships": 2};
+}
+
+function respondWithLockInformation(agent){
+  //todo: respondWithLockInformation
 }
