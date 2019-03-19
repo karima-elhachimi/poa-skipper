@@ -1,6 +1,7 @@
 'use strict'
 
 const express = require('express')
+const http = require('http');
 const https = require('https')
 const axios = require('axios')
 const URL = require('url').URL;
@@ -61,10 +62,10 @@ exports.fulfillment = functions.https.onRequest((request, response) => {
 
   function allLocks(agent) {
     return requestAllLocks()
-      .then(res => {
+      /*.then(res => {
         console.log(`request all locks response: ${res}`);
         agent.add(`alle sluizen werden opgehaald: ${res}`);
-      }, er => console.log(er)).catch(err => agent.add(`Er is iets misgegaan bij het ophalen van de sluizen. error: ${err}`));
+      }, er => console.log(er)).catch(err => agent.add(`Er is iets misgegaan bij het ophalen van de sluizen. error: ${err}`));*/
   }
   function executionDetails(agent) {
     let lock = agent.parameters.paramSluis;
@@ -185,17 +186,26 @@ function createGetLocksPath(){
 function createGetLockPath(lockId){
   return `/apics/lock/${lockId}`;
 }
-function requestApicsData(url, path){
-  let fullUrl = getFullUrl(path, url);
 
-  console.log(`all locks url: ${fullUrl}`);
-  return axios.get(url);
+function requestApicsData(path, url){
+  let fullUrl = getFullUrl(path, url);
+  var options = { method: 'GET',
+    url: fullUrl,
+    headers:
+      { 'cache-control': 'no-cache' } };
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+
+    console.log(body);
+  });
 }
 
 function requestAllLocks(){
   console.log(`request all locks started`);
   let path = createGetLocksPath();
-  return requestApicsData(apicsHost, path)
+  return requestApicsData(path, apicsHost);
+
 }
 
 function requestLockExecutions(lock){

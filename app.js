@@ -1,10 +1,12 @@
 'use strict'
 
-const express = require('express')
-const https = require('https')
-const axios = require('axios')
+const express = require('express');
+const http = require('http');
+const https = require('https');
+const axios = require('axios');
+const request = require('request');
 const URL = require('url').URL;
-const app = express()
+const app = express();
 
 // dialogflow
 const functions = require('firebase-functions')
@@ -19,11 +21,13 @@ admin.initializeApp()
 const stormglassHost = 'http://api.stormglass.io'
 const nomiHost = 'http://nominatim.openstreetmap.org';
 //mock api voor apics
-const apicsHost = 'http://demo5740953.mockable.io';
+const apicsHost = 'http://da7419d8.ngrok.io';
 //keys
 const stormGlassApi = '38116ef6-44b8-11e9-8f0d-0242ac130004-38117022-44b8-11e9-8f0d-0242ac130004'
 
 app.get('/', (req, res) => res.send('online'))
+
+
 
 app.post('/fulfillment', express.json(), (request, response) => {
   let agent = new WebhookClient({ request: request, response: response });
@@ -62,9 +66,10 @@ app.post('/fulfillment', express.json(), (request, response) => {
 
   function allLocks(agent) {
     return requestAllLocks()
-      .then(res => {
-        console.log(`request all locks response: ${res}`);
-        agent.add(`alle sluizen werden opgehaald: ${res}`);
+      .then(locks => {
+        console.log(`request all locks response: ${locks}`);
+        let text = formatLocks(locks);
+        agent.add(`Alle sluizen in Antwerpen en hun statussen:\n ${text}`);
       }, er => console.log(er)).catch(err => agent.add(`Er is iets misgegaan bij het ophalen van de sluizen. error: ${err}`));
   }
   function executionDetails(agent) {
@@ -88,7 +93,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
 function getFullUrl (path, host) {
   let url = new URL(path, host);
   console.log(`fullURL: ${url}`);
-  return url;
+  return url.toString();
 }
 
 
@@ -115,7 +120,7 @@ function requestNauticalWeatherData (url) {
       'Content-Type': 'application/json'
     }
   }
-  return axios.get(url, config)
+  return axios.get(url)
 }
 
 function createNauticalSearchPath (lat, lon, params) {
@@ -186,20 +191,48 @@ function createGetLocksPath(){
 function createGetLockPath(lockId){
   return `/apics/lock/${lockId}`;
 }
-function requestApicsData(url, path){
-  let fullUrl = getFullUrl(path, url);
 
-  console.log(`all locks url: ${fullUrl}`);
-  return axios.get(url);
+function requestApicsData(url){
+  console.log(`apics request url: ${url}`);
+  return new Promise((resolve, reject)=> {
+    var options = { method: 'GET',
+      url: url,
+      headers:
+        { 'cache-control': 'no-cache' } };
+
+    request(options, function (error, response, body) {
+      if (error) {
+        throw new Error(error)
+        reject(error);
+      }
+      console.log(body);
+      resolve(body);
+    });
+  })
 }
 
 function requestAllLocks(){
-  console.log(`request all locks started`);
-  let path = createGetLocksPath();
-  return requestApicsData(apicsHost, path)
+  let locksPath = createGetLocksPath();
+  let url = getFullUrl(locksPath, apicsHost);
+  return requestApicsData(url);
 }
 
 function requestLockExecutions(lock){
-
+  let lockExecutionsPath = createGetLockExecutionsPath(lock.lockCode);
+  let url = getFullUrl(lockExecutionsPath, apicsHost);
+  return requestApicsData(url);
 }
+
+function formatLocks (locks) {
+  let format = '';
+
+  locks = JSON.parse(locks);
+  for (let i = 0; i < locks.length; i++){
+    format += `${locks[i].lockName} status: ${locks[0].status}\n`;
+
+  }
+  console.log(format);
+  return format;
+}
+
 module.exports = app
