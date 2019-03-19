@@ -22,8 +22,19 @@ const stormglassHost = 'http://api.stormglass.io'
 const nomiHost = 'http://nominatim.openstreetmap.org';
 //mock api voor apics
 const apicsHost = 'http://da7419d8.ngrok.io';
-//keys
+//api keys
 const stormGlassApi = '38116ef6-44b8-11e9-8f0d-0242ac130004-38117022-44b8-11e9-8f0d-0242ac130004'
+
+//lockCode keys
+let lcArray = [
+  ["berendrechtsluis", "BES"],
+  ["van cauwelaertsluis", "VCS"],
+  ["boudewijnsluis", "BOS"],
+  ["royersluis", "ROS"],
+  ["kieldrechtsluis", "KIS"],
+  ["kallosluis", "KAS"],
+];
+const lockCodeMap = new Map(lcArray);
 
 app.get('/', (req, res) => res.send('online'))
 
@@ -64,6 +75,12 @@ app.post('/fulfillment', express.json(), (request, response) => {
       }).catch(er => agent.add(`Het ophalen van de schuttingen voor ${lock} is mislukt. error: ${er}`));
   }
 
+  function lockDetails(agent){
+    let lockName = agent.parameters.paramSluis;
+    console.log(`lock details ${lockCodeMap.get(lockName)}`);
+    agent.add(`Ik vraag de details op voor de ${lockName}`);
+  }
+
   function allLocks(agent) {
     return requestAllLocks()
       .then(locks => {
@@ -72,6 +89,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
         agent.add(`Alle sluizen in Antwerpen en hun statussen:\n ${text}`);
       }, er => console.log(er)).catch(err => agent.add(`Er is iets misgegaan bij het ophalen van de sluizen. error: ${err}`));
   }
+
   function executionDetails(agent) {
     let lock = agent.parameters.paramSluis;
     agent.add(`Ik antwoord binnenkort met schutting details voor ${lock}`);
@@ -79,15 +97,16 @@ app.post('/fulfillment', express.json(), (request, response) => {
 
   // Run the proper function handler based on the matched Dialogflow intent name
   let intentMap = new Map()
-  intentMap.set('Default Welcome Intent', welcome);
-  intentMap.set('Default Fallback Intent', fallback);
+  //intentMap.set('Default Welcome Intent', welcome);
+  //intentMap.set('Default Fallback Intent', fallback);
   intentMap.set('nautisch.algemeen', nauticalForecast);
   intentMap.set('sluis.schuttingen', allExecutions);
   intentMap.set('sluis.toestand.algemeen - yes', allLocks);
+  intentMap.set('sluis.toestand.detail', lockDetails )
   intentMap.set('sluis.schutting.details', executionDetails)
 
   agent.handleRequest(intentMap);
-})
+});
 
 
 function getFullUrl (path, host) {
@@ -188,8 +207,8 @@ function createGetLocksPath(){
   return `/apics/locks`;
 }
 
-function createGetLockPath(lockId){
-  return `/apics/lock/${lockId}`;
+function createGetLockPath(lockCode){
+  return `/apics/lock/${lockCode}`;
 }
 
 function requestApicsData(url){
