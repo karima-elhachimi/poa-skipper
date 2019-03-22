@@ -1,5 +1,7 @@
 'use strict'
 
+
+
 const express = require('express');
 const http = require('http');
 const https = require('https');
@@ -8,7 +10,9 @@ const request = require('request');
 const URL = require('url').URL;
 const app = express();
 
-// dialogflow
+
+
+// dialogflow fulfillment
 const functions = require('firebase-functions')
 const { WebhookClient } = require('dialogflow-fulfillment')
 const { Card, Suggestion } = require('dialogflow-fulfillment')
@@ -17,11 +21,15 @@ process.env.DEBUG = 'dialogflow:debug' // enables lib debugging statements
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 admin.initializeApp()
 
+//dialogflow client
+const df = require('./dialogflow');
+const dfAgent = new df();
+
 // api
 const stormglassHost = 'http://api.stormglass.io'
 const nomiHost = 'http://nominatim.openstreetmap.org';
 //mock api voor apics
-const apicsHost = 'http://da7419d8.ngrok.io';
+const apicsHost = 'http://4481ac17.ngrok.io';
 //api keys
 const stormGlassApi = '38116ef6-44b8-11e9-8f0d-0242ac130004-38117022-44b8-11e9-8f0d-0242ac130004'
 
@@ -35,6 +43,17 @@ let lcArray = [
   ["kallosluis", "KAS"],
 ];
 const lockCodeMap = new Map(lcArray);
+
+
+
+
+app.get('/bot/:text', (req, res) =>{
+  dfAgent.sendTextMessageToDialogFlow(req.params.text, "localhost")
+    .then(answer => {
+      res.send(answer);
+    })
+    .catch(err => res.send(err))
+})
 
 app.get('/', (req, res) => res.send('online'))
 
@@ -76,7 +95,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
   }
 
   function lockDetails(agent){
-    let lockName = agent.parameters.paramSluis;
+    let lockName = agent.parameters.paramSluis.toLowerCase();
     console.log(`lock details ${lockCodeMap.get(lockName)}`);
     agent.add(`Ik vraag de details op voor de ${lockName}`);
   }
@@ -102,8 +121,8 @@ app.post('/fulfillment', express.json(), (request, response) => {
   intentMap.set('nautisch.algemeen', nauticalForecast);
   intentMap.set('sluis.schuttingen', allExecutions);
   intentMap.set('sluis.toestand.algemeen - yes', allLocks);
-  intentMap.set('sluis.toestand.detail', lockDetails )
-  intentMap.set('sluis.schutting.details', executionDetails)
+  intentMap.set('sluis.toestand.detail',lockDetails )
+  intentMap.set('sluis.schutting.details',executionDetails)
 
   agent.handleRequest(intentMap);
 });
@@ -115,6 +134,7 @@ function getFullUrl (path, host) {
   return url.toString();
 }
 
+//helpers voor de intent handlers
 
 function createLatAndLongSearchParams (city) {
   return `/search?q=${city}&format=json&limit=1`;
@@ -247,7 +267,7 @@ function formatLocks (locks) {
 
   locks = JSON.parse(locks);
   for (let i = 0; i < locks.length; i++){
-    format += `${locks[i].lockName} status: ${locks[0].status}\n`;
+    format += `${locks[i].lockName} status: ${locks[i].status}\n`;
 
   }
   console.log(format);
