@@ -2,6 +2,7 @@
 
 const dialogflow = require('dialogflow');
 const dotenv = require('dotenv').config()
+const Chatmessage = require('./models/Chatmessage');
 
 module.exports = class DialogFlow {
   constructor () {
@@ -36,12 +37,17 @@ module.exports = class DialogFlow {
     }
     try {
       let responses = await this.sessionClient.detectIntent(request)
-      console.log(`DialogFlow.sendTextMessageToDialogFlow: Detected intent is ${responses[0].queryResult.fulfillmentText}`);
-      return responses[0];
+      console.log(`DialogFlow.sendTextMessageToDialogFlow: Detected intent is ${responses[0].queryResult.fulfillmentMessages}`);
+      return this.createMessage(responses[0].queryResult);
     }
     catch(err) {
       console.error('DialogFlow.sendTextMessageToDialogFlow ERROR:', err);
       throw err
     }
+  }
+
+  createMessage(queryres) {
+    let message = new Chatmessage(queryres.intent.displayName, 'bot', queryres.fulfillmentText, Date.now() );
+    return message;
   }
 }

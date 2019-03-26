@@ -61,6 +61,12 @@ exports.fulfillment = functions.https.onRequest((request, response) => {
       }).catch(er => agent.add(`Het ophalen van de schuttingen voor ${lock} is mislukt. error: ${er}`));
   }
 
+  function lockDetails(agent){
+    let lockName = agent.parameters.paramSluis.toLowerCase();
+    console.log(`lock details ${lockCodeMap.get(lockName)}`);
+    agent.add(`Ik vraag de details op voor de ${lockName}`);
+  }
+
   function allLocks(agent) {
     return requestAllLocks()
       .then(locks => {
@@ -69,6 +75,7 @@ exports.fulfillment = functions.https.onRequest((request, response) => {
         agent.add(`Alle sluizen in Antwerpen en hun statussen:\n ${text}`);
       }, er => console.log(er)).catch(err => agent.add(`Er is iets misgegaan bij het ophalen van de sluizen. error: ${err}`));
   }
+
   function executionDetails(agent) {
     let lock = agent.parameters.paramSluis;
     agent.add(`Ik antwoord binnenkort met schutting details voor ${lock}`);
@@ -76,15 +83,16 @@ exports.fulfillment = functions.https.onRequest((request, response) => {
 
   // Run the proper function handler based on the matched Dialogflow intent name
   let intentMap = new Map()
-  intentMap.set('Default Welcome Intent', welcome);
-  intentMap.set('Default Fallback Intent', fallback);
+  //intentMap.set('Default Welcome Intent', welcome);
+  //intentMap.set('Default Fallback Intent', fallback);
   intentMap.set('nautisch.algemeen', nauticalForecast);
   intentMap.set('sluis.schuttingen', allExecutions);
   intentMap.set('sluis.toestand.algemeen - yes', allLocks);
-  intentMap.set('sluis.schutting.details', executionDetails)
+  intentMap.set('sluis.toestand.detail',lockDetails )
+  intentMap.set('sluis.schutting.details',executionDetails)
 
   agent.handleRequest(intentMap);
-})
+});
 
 
 function getFullUrl (path, host) {
@@ -93,6 +101,7 @@ function getFullUrl (path, host) {
   return url.toString();
 }
 
+//helpers voor de intent handlers
 
 function createLatAndLongSearchParams (city) {
   return `/search?q=${city}&format=json&limit=1`;
@@ -185,8 +194,8 @@ function createGetLocksPath(){
   return `/apics/locks`;
 }
 
-function createGetLockPath(lockId){
-  return `/apics/lock/${lockId}`;
+function createGetLockPath(lockCode){
+  return `/apics/lock/${lockCode}`;
 }
 
 function requestApicsData(url){
@@ -225,7 +234,7 @@ function formatLocks (locks) {
 
   locks = JSON.parse(locks);
   for (let i = 0; i < locks.length; i++){
-    format += `${locks[i].lockName} status: ${locks[0].status}\n`;
+    format += `${locks[i].lockName} status: ${locks[i].status}\n`;
 
   }
   console.log(format);

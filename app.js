@@ -46,11 +46,20 @@ const lockCodeMap = new Map(lcArray);
 
 
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
-app.get('/bot/:text', (req, res) =>{
+
+app.get('/chat/:text', (req, res) =>{
   dfAgent.sendTextMessageToDialogFlow(req.params.text, "localhost")
     .then(answer => {
-      res.send(answer);
+      console.log(answer);
+      res.json(
+         answer
+      );
     })
     .catch(err => res.send(err))
 })
