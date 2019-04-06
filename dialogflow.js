@@ -37,7 +37,7 @@ module.exports = class DialogFlow {
     }
     try {
       let responses = await this.sessionClient.detectIntent(request)
-      console.log(`DialogFlow.sendTextMessageToDialogFlow: Detected intent is ${responses[0].queryResult.fulfillmentMessages}`);
+      console.log(`DialogFlow.sendTextMessageToDialogFlow: Detected intent is ${responses[0].queryResult.fulfillmentMessages[0].text.text[0]}`);
       return this.createMessage(responses[0].queryResult);
     }
     catch(err) {
@@ -47,7 +47,7 @@ module.exports = class DialogFlow {
   }
 
   createMessage(queryres) {
-    let message = new Chatmessage(queryres.intent.displayName, 'bot', queryres.fulfillmentText, Date.now() );
+    let message = new Chatmessage(queryres.intent.displayName, 'bot', queryres.fulfillmentMessages[0].text.text[0]  , Date.now() );
     return message;
   }
 }

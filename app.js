@@ -29,7 +29,7 @@ const dfAgent = new df();
 const stormglassHost = 'http://api.stormglass.io'
 const nomiHost = 'http://nominatim.openstreetmap.org';
 //mock api voor apics
-const apicsHost = 'http://4481ac17.ngrok.io';
+const apicsHost = 'http://localhost:1880';
 //api keys
 const stormGlassApi = '38116ef6-44b8-11e9-8f0d-0242ac130004-38117022-44b8-11e9-8f0d-0242ac130004'
 
