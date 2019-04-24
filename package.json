@@ -9,7 +9,7 @@
     "node": "8"
   },
   "scripts": {
-    "start": "firebase serve --only functions",
+    "start": "nodemon",
     "deploy": "firebase deploy --only functions",
     "tunnel": "ngrok http 8080",
     "dev": "nodemon --inspect server.js",
