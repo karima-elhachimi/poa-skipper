@@ -9,7 +9,7 @@
     "node": "8"
   },
   "scripts": {
-    "start": "nodemon nodemon server.js",
+    "start": "nodemon --inspect server.js",
     "deploy": "firebase deploy --only functions",
     "tunnel": "ngrok http 8080",
     "dev": "nodemon --inspect server.js",
@@ -21,11 +21,13 @@
     "dialogflow": "^0.6.0",
     "dialogflow-fulfillment": "^0.5.0",
     "express": "^4.16.4",
-    "firebase-admin": "^5.13.1",
+    "firebase-admin": "~7.0.0",
     "firebase-functions": "^2.0.2",
     "http": "0.0.0",
     "request": "^2.88.0",
-    "url": "^0.11.0"
+    "url": "^0.11.0",
+    "nodemon": "^1.18.10",
+    "standard": "^12.0.1"
   },
   "devDependencies": {
     "nodemon": "^1.18.10",
