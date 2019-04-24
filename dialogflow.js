@@ -23,7 +23,7 @@ module.exports = class DialogFlow {
   }
 
   async sendTextMessageToDialogFlow(textMessage, sessionId) {
-    // Define session path
+    // session path -> waarvoor dient dit?
     const sessionPath = this.sessionClient.sessionPath(this.projectId, sessionId);
     // The text query request.
     const request = {
