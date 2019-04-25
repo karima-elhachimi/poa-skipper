@@ -90,7 +90,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
       .then(nautischeData => {
         console.log(`json parse data: ${JSON.stringify(nautischeData.data.hours[0])}`)
         let text = formatWeatherForecast(nautischeData.data.hours[0]);
-        agent.add(`#nauticalForecast is executing`);
+        agent.add(text);
       }).catch(er => agent.add(`something went wrong: ${er}`))
   }
 
