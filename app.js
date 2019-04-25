@@ -90,7 +90,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
       .then(nautischeData => {
         console.log(`json parse data: ${JSON.stringify(nautischeData.data.hours[0])}`)
         let text = formatWeatherForecast(nautischeData.data.hours[0]);
-        agent.add(text)
+        agent.add(`#nauticalForecast is executing`);
       }).catch(er => agent.add(`something went wrong: ${er}`))
   }
 
@@ -187,7 +187,6 @@ function createNauticalParams(...params) {
 
 function respondWithNauticalWeatherData (agent, req){
   console.log('function respondWithNauticalWeatherData started');
-  console.log(agent.parameters);
   let city = agent.parameters.paramLocatie;
   console.log(`city: ${city}`)
   agent.add(`Momentje, ik ben de nautische weergegevens voor ${city} aan het zoeken...`)
@@ -214,9 +213,10 @@ function respondWithNauticalWeatherData (agent, req){
 function formatWeatherForecast(forecastData) {
   let temp = forecastData.airTemperature[0].value;
   let wk = forecastData.windSpeed[0].value;
-  return `temperatuur: ${temp} graden celcius
-          windkracht: ${wk} meter per seconde.
-  `
+  let text =  `temperatuur: ${temp} graden celcius
+  windkracht: ${wk} meter per seconde.`;
+  console.log(`#formatWeatherForecast: ${text}`);
+  return text;
 }
 
 function getLockCode (lockname) {
