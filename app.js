@@ -37,7 +37,7 @@ const dfAgent = new df();
 const stormglassHost = 'http://api.stormglass.io'
 const nomiHost = 'http://nominatim.openstreetmap.org';
 //mock api voor apics
-const apicsHost = 'http://localhost:1880';
+const apicsHost = 'http://apics.herokuapp.com';
 //api keys
 const stormGlassApi = '38116ef6-44b8-11e9-8f0d-0242ac130004-38117022-44b8-11e9-8f0d-0242ac130004'
 
@@ -247,7 +247,8 @@ function requestApicsData(url){
     var options = { method: 'GET',
       url: url,
       headers:
-        { 'cache-control': 'no-cache' } };
+        { 'Content-Type': 'application/json',
+       } };
 
     request(options, function (error, response, body) {
       if (error) {
