@@ -189,7 +189,7 @@ function respondWithNauticalWeatherData (agent, req){
   console.log('function respondWithNauticalWeatherData started');
   let city = agent.parameters.paramLocatie;
   console.log(`city: ${city}`)
-  agent.add(`Momentje, ik ben de nautische weergegevens voor ${city} aan het zoeken...`)
+  //agent.add(`Momentje, ik ben de nautische weergegevens voor ${city} aan het zoeken...`)
   let latlon = [];
   //eerst latitude en longitude ophalen
   return requestLatandLonData(city)
