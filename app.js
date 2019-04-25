@@ -4,7 +4,10 @@ const express = require('express')
 const https = require('https')
 const axios = require('axios')
 const URL = require('url').URL;
+const cors = require('cors');
 const app = express()
+
+app.use(cors());
 
 // dialogflow
 const functions = require('firebase-functions')
