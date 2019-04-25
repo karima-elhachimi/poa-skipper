@@ -8,14 +8,12 @@ const https = require('https');
 const axios = require('axios');
 const request = require('request');
 const URL = require('url').URL;
-const cors = require(cors);
-const app = express();
+const cors = require('cors');
+const app = express()
 
 app.use(cors());
 
-
-
-// dialogflow fulfillment
+// dialogflow
 const functions = require('firebase-functions')
 const { WebhookClient } = require('dialogflow-fulfillment')
 const { Card, Suggestion } = require('dialogflow-fulfillment')
