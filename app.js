@@ -8,7 +8,10 @@ const https = require('https');
 const axios = require('axios');
 const request = require('request');
 const URL = require('url').URL;
+const cors = require(cors);
 const app = express();
+
+app.use(cors());
 
 
 
