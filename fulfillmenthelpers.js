@@ -65,12 +65,11 @@ module.exports = class FulfillmentHelpers {
         return params;
     }
 
-    respondWithNauticalWeatherData(agent, req) {
-        console.log('function respondWithNauticalWeatherData started');
+    respondWithNauticalWeatherData(agent) {
+        console.log('#respondWithNauticalWeatherData started');
         let city = agent.parameters.paramLocatie;
         console.log(`city: ${city}`)
         //agent.add(`Momentje, ik ben de nautische weergegevens voor ${city} aan het zoeken...`)
-        let latlon = [];
         //eerst latitude en longitude ophalen
         return this.requestLatandLonData(city)
             .then(latlon => {
@@ -80,6 +79,7 @@ module.exports = class FulfillmentHelpers {
                 let path = this.createNauticalSearchPath(latlon[0], latlon[1], nauticalWeatherParams)
 
                 let url = this.getFullUrl(path, this.weatherHost).toString();
+                console.log(`#respondWithNauticalWeatherdata url: ${url}`);
                 return axios.get(url, {
                     headers: {
                         'Authorization': this.weatherApiKey,
