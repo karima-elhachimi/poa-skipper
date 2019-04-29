@@ -15,6 +15,7 @@ module.exports = class FulfillmentHelpers {
         this.weatherApiKey = process.env.sg_api;
         this.geoHost =  process.env.geo_host; 
         this.apicsHost =  process.env.apics_mock_host; 
+        console.log(`helper initiated with: ${this.weatherHost} ${this.weatherApiKey}`);
      }
 
 
@@ -31,9 +32,11 @@ module.exports = class FulfillmentHelpers {
     }
 
     requestLatandLonData(location) {
+        
         let url = this.getFullUrl(this.createLatAndLongSearchParams(location), this.geoHost);
+        console.log(`#requestLatandLonData url: ${url}`);
 
-        return axios.get(url.toString())
+        return axios.get(url)
             .then(res => {
                 console.log(`lat lon response: ${JSON.parse(res.data[0].lat)}`);
                 return [JSON.parse(res.data[0].lat), JSON.parse(res.data[0].lon)];
@@ -78,7 +81,7 @@ module.exports = class FulfillmentHelpers {
                 //todo: nautical weather params maken op basis van params uit df
                 let path = this.createNauticalSearchPath(latlon[0], latlon[1], nauticalWeatherParams)
 
-                let url = this.getFullUrl(path, this.weatherHost).toString();
+                let url = this.getFullUrl(path, this.weatherHost);
                 console.log(`#respondWithNauticalWeatherdata url: ${url}`);
                 return axios.get(url, {
                     headers: {
