@@ -31,7 +31,7 @@ module.exports = class FulfillmentHelpers {
     }
 
     requestLatandLonData(location) {
-        let url = getFullUrl(createLatAndLongSearchParams(location), this.geoHost);
+        let url = this.getFullUrl(this.createLatAndLongSearchParams(location), this.geoHost);
 
         return axios.get(url.toString())
             .then(res => {
@@ -77,9 +77,9 @@ module.exports = class FulfillmentHelpers {
                 //todo: url samenstellen voor het zoeken met createNauticalParams
                 let nauticalWeatherParams = "airTemperature,windSpeed" //https://docs.stormglass.io/#point-request
                 //todo: nautical weather params maken op basis van params uit df
-                let path = createNauticalSearchPath(latlon[0], latlon[1], nauticalWeatherParams)
+                let path = this.createNauticalSearchPath(latlon[0], latlon[1], nauticalWeatherParams)
 
-                let url = getFullUrl(path, weatherHost).toString();
+                let url = this.getFullUrl(path, weatherHost).toString();
                 return axios.get(url, {
                     headers: {
                         'Authorization': this.weatherApiKey,
@@ -104,7 +104,7 @@ module.exports = class FulfillmentHelpers {
     }
 
     createGetLockExecutionsPath(lockname) {
-        let code = getLockCode(lockname);
+        let code = this.getLockCode(lockname);
         return `/apics/lockexecutions/${code}`;
     }
 
@@ -144,15 +144,15 @@ module.exports = class FulfillmentHelpers {
     }
 
     requestAllLocks() {
-        let locksPath = createGetLocksPath();
-        let url = getFullUrl(locksPath, this.apicsHost);
-        return requestApicsData(url);
+        let locksPath = this.createGetLocksPath();
+        let url = this.getFullUrl(locksPath, this.apicsHost);
+        return this.requestApicsData(url);
     }
 
     requestLockExecutions(lock) {
-        let lockExecutionsPath = createGetLockExecutionsPath(lock.lockCode);
-        let url = getFullUrl(lockExecutionsPath, this.apicsHost);
-        return requestApicsData(url);
+        let lockExecutionsPath = this.createGetLockExecutionsPath(lock.lockCode);
+        let url = this.getFullUrl(lockExecutionsPath, this.apicsHost);
+        return this.requestApicsData(url);
     }
 
     formatLocks(locks) {
