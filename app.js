@@ -3,11 +3,6 @@
 
 
 const express = require('express');
-const http = require('http');
-const https = require('https');
-const axios = require('axios');
-const request = require('request');
-const URL = require('url').URL;
 const cors = require('cors');
 const app = express()
 
@@ -21,9 +16,12 @@ app.use(function(req, res, next) {
 });
 
 // dialogflow
-const functions = require('firebase-functions')
+
 const { WebhookClient } = require('dialogflow-fulfillment')
 const { Card, Suggestion } = require('dialogflow-fulfillment')
+//dialogflow fulfillment helper
+const fullfillmentHelper = require('./fulfillmenthelpers')
+const helper = new fullfillmentHelper();
 const admin = require('firebase-admin')
 process.env.DEBUG = 'dialogflow:debug' // enables lib debugging statements
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -33,9 +31,7 @@ admin.initializeApp()
 const df = require('./dialogflow');
 const dfAgent = new df();
 
-//dialogflow fulfillment helper
-const fullfillmentHelper = require('./fulfillmenthelpers')
-const helper = new fullfillmentHelper();
+
 // api
 const stormglassHost = 'http://api.stormglass.io'
 const nomiHost = 'http://nominatim.openstreetmap.org';
@@ -85,7 +81,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
     return helper.respondWithNauticalWeatherData(agent)
       .then(nautischeData => {
         console.log(`json parse data: ${JSON.stringify(nautischeData.data.hours[0])}`)
-        let text = formatWeatherForecast(nautischeData.data.hours[0]);
+        let text = helper.formatWeatherForecast(nautischeData.data.hours[0]);
         agent.add(text);
       }).catch(er => agent.add(`something went wrong: ${er}`))
   }
@@ -132,154 +128,5 @@ app.post('/fulfillment', express.json(), (request, response) => {
 
   agent.handleRequest(intentMap);
 });
-
-
-//webhook helper functions wrappen in eigen file
-function getFullUrl (path, host) {
-  let url = new URL(path, host);
-  console.log(`fullURL: ${url}`);
-  return url.toString();
-}
-
-//helpers voor de intent handlers
-
-function createLatAndLongSearchParams (city) {
-  return `/search?q=${city}&format=json&limit=1`;
-}
-
-function requestLatandLonData(location) {
-  let url = getFullUrl(createLatAndLongSearchParams(location), nomiHost);
-
-  return axios.get(url.toString())
-    .then(res => {
-      console.log(`lat lon response: ${JSON.parse(res.data[0].lat)}`);
-      return [JSON.parse(res.data[0].lat), JSON.parse(res.data[0].lon)];
-    });
-}
-
-
-function requestNauticalWeatherData (url) {
-  console.log('creating axios request for ' + url)
-  let config = {
-    headers: {
-      'Authorization': stormGlassApi,
-      'Content-Type': 'application/json'
-    }
-  }
-  return axios.get(url)
-}
-
-function createNauticalSearchPath (lat, lon, params) {
-  return `/point?lat=${lat}&lng=${lon}&source=sg&params=${params}`
-}
-
-function createNauticalParams(...params) {
-  let paramString;
-  for (let i = 0; i < params; i++) {
-    paramString += `, ${params[i]}`
-  }
-
-  return params;
-}
-
-function respondWithNauticalWeatherData (agent, req){
-  console.log('function respondWithNauticalWeatherData started');
-  let city = agent.parameters.paramLocatie;
-  console.log(`city: ${city}`)
-  //agent.add(`Momentje, ik ben de nautische weergegevens voor ${city} aan het zoeken...`)
-  let latlon = [];
-  //eerst latitude en longitude ophalen
-  return requestLatandLonData(city)
-    .then(latlon => {
-      //url samenstellen voor het zoeken
-      let nauticalWeatherParams = "airTemperature,windSpeed" //https://docs.stormglass.io/#point-request
-      //todo: nautical weather params maken op basis van params uit df
-      let path = createNauticalSearchPath(latlon[0], latlon[1], nauticalWeatherParams)
-
-      let url = getFullUrl(path, stormglassHost).toString();
-      return axios.get(url, {
-        headers: {
-
-          'Authorization': stormGlassApi,
-          'Content-Type': 'application/json'
-        }
-      })
-    })
-}
-
-function formatWeatherForecast(forecastData) {
-  let temp = forecastData.airTemperature[0].value;
-  let wk = forecastData.windSpeed[0].value;
-  let text =  `temperatuur: ${temp} graden celcius
-  windkracht: ${wk} meter per seconde.`;
-  console.log(`#formatWeatherForecast: ${text}`);
-  return text;
-}
-
-function getLockCode (lockname) {
-  //todo: uitwerken mapping tussen sluisnaam en sluidcode
-  return `ZAS`;
-}
-
-function createGetLockExecutionsPath(lockname) {
-  let code = getLockCode(lockname);
-  return `/apics/lockexecutions/${code}`;
-}
-
-function createGetLockExecutionPath(executionId) {
-  return `/apics/lockexecution/${executionId}`;
-}
-
-function createGetLocksPath(){
-  return `/apics/locks`;
-}
-
-function createGetLockPath(lockCode){
-  return `/apics/lock/${lockCode}`;
-}
-
-function requestApicsData(url){
-  console.log(`apics request url: ${url}`);
-  return new Promise((resolve, reject)=> {
-    var options = { method: 'GET',
-      url: url,
-      headers:
-        { 'Content-Type': 'application/json',
-       } };
-
-    request(options, function (error, response, body) {
-      if (error) {
-        throw new Error(error)
-        reject(error);
-      }
-      console.log(body);
-      resolve(body);
-    });
-  })
-}
-
-function requestAllLocks(){
-  let locksPath = createGetLocksPath();
-  let url = getFullUrl(locksPath, apicsHost);
-  return requestApicsData(url);
-}
-
-function requestLockExecutions(lock){
-  let lockExecutionsPath = createGetLockExecutionsPath(lock.lockCode);
-  let url = getFullUrl(lockExecutionsPath, apicsHost);
-  return requestApicsData(url);
-}
-
-function formatLocks (locks) {
-  let format = '';
-
-  locks = JSON.parse(locks);
-  for (let i = 0; i < locks.length; i++){
-    format += `${locks[i].lockName} status: ${locks[i].status}\n`;
-
-  }
-  console.log(format);
-  return format;
-}
 
 module.exports = app
