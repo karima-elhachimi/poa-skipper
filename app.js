@@ -33,6 +33,9 @@ admin.initializeApp()
 const df = require('./dialogflow');
 const dfAgent = new df();
 
+//dialogflow fulfillment helper
+const fullfillmentHelper = require('./fulfillmenthelpers')
+const helper = new fullfillmentHelper();
 // api
 const stormglassHost = 'http://api.stormglass.io'
 const nomiHost = 'http://nominatim.openstreetmap.org';
@@ -42,15 +45,8 @@ const apicsHost = 'http://apics.herokuapp.com';
 const stormGlassApi = '38116ef6-44b8-11e9-8f0d-0242ac130004-38117022-44b8-11e9-8f0d-0242ac130004'
 
 //lockCode keys
-let lcArray = [
-  ["berendrechtsluis", "BES"],
-  ["van cauwelaertsluis", "VCS"],
-  ["boudewijnsluis", "BOS"],
-  ["royersluis", "ROS"],
-  ["kieldrechtsluis", "KIS"],
-  ["kallosluis", "KAS"],
-];
-const lockCodeMap = new Map(lcArray);
+const lockCodeMap = require('./lockcodes');
+
 
 
 
@@ -86,7 +82,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
   }
 
   function nauticalForecast (agent) {
-    return respondWithNauticalWeatherData(agent)
+    return helper.respondWithNauticalWeatherData(agent)
       .then(nautischeData => {
         console.log(`json parse data: ${JSON.stringify(nautischeData.data.hours[0])}`)
         let text = formatWeatherForecast(nautischeData.data.hours[0]);
@@ -97,7 +93,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
   function allExecutions(agent) {
     let lock = agent.parameters.paramSluis;
     //agent.add(`Ik antwoord binnenkort met alle schuttingen voor ${lock}`);
-    return requestLockExecutions(lock)
+    return helper.requestLockExecutions(lock)
       .then(res => {
         console.log(`request all executions response: ${res}`);
 
@@ -111,7 +107,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
   }
 
   function allLocks(agent) {
-    return requestAllLocks()
+    return helper.requestAllLocks()
       .then(locks => {
         console.log(`request all locks response: ${locks}`);
         let text = formatLocks(locks);
@@ -138,6 +134,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
 });
 
 
+//webhook helper functions wrappen in eigen file
 function getFullUrl (path, host) {
   let url = new URL(path, host);
   console.log(`fullURL: ${url}`);
