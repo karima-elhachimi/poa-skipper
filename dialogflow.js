@@ -1,7 +1,7 @@
 'use strict'
 
 const dialogflow = require('dialogflow');
-const dotenv = require('dotenv').config()
+const dotenv = require('dotenv').config();
 const Chatmessage = require('./models/Chatmessage');
 
 module.exports = class DialogFlow {

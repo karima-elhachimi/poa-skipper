@@ -6,10 +6,6 @@ const request = require('request');
 const URL = require('url').URL;
 
 module.exports = class FulfillmentHelpers {
-   
-   
-
-
     constructor() {
         this.weatherHost = process.env.weather_host; 
         this.weatherApiKey = process.env.sg_api;
