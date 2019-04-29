@@ -72,7 +72,7 @@ module.exports = class FulfillmentHelpers {
         //agent.add(`Momentje, ik ben de nautische weergegevens voor ${city} aan het zoeken...`)
         let latlon = [];
         //eerst latitude en longitude ophalen
-        return requestLatandLonData(city)
+        return this.requestLatandLonData(city)
             .then(latlon => {
                 //todo: url samenstellen voor het zoeken met createNauticalParams
                 let nauticalWeatherParams = "airTemperature,windSpeed" //https://docs.stormglass.io/#point-request
