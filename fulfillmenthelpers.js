@@ -8,7 +8,7 @@ const URL = require('url').URL;
 module.exports = class FulfillmentHelpers {
     constructor() {
         this.weatherHost = process.env.weather_host; 
-        this.weatherApiKey = process.env.sg_api;
+        this.weatherApiKey = process.env.weather_api;
         this.geoHost =  process.env.geo_host; 
         this.apicsHost =  process.env.apics_mock_host; 
         console.log(`helper initiated with: ${this.weatherHost} ${this.weatherApiKey}`);
