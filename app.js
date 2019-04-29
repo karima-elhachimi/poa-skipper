@@ -41,7 +41,8 @@ const apicsHost = 'http://apics.herokuapp.com';
 const stormGlassApi = '38116ef6-44b8-11e9-8f0d-0242ac130004-38117022-44b8-11e9-8f0d-0242ac130004'
 
 //lockCode keys
-const lockCodeMap = require('./lockcodes');
+const lcArray = require('./lockcodes');
+const lockCodeMap = new Map(lcArray);
 
 
 

@@ -8,4 +8,4 @@ let lcArray = [
     ["kallosluis", "KAS"],
   ];
 
-module.exports = new Map(lcArray);
+module.exports = lcArray;
