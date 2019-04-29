@@ -79,7 +79,7 @@ module.exports = class FulfillmentHelpers {
                 //todo: nautical weather params maken op basis van params uit df
                 let path = this.createNauticalSearchPath(latlon[0], latlon[1], nauticalWeatherParams)
 
-                let url = this.getFullUrl(path, weatherHost).toString();
+                let url = this.getFullUrl(path, this.weatherHost).toString();
                 return axios.get(url, {
                     headers: {
                         'Authorization': this.weatherApiKey,
