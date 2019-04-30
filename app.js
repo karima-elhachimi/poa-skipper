@@ -132,7 +132,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
         agent.add('Call succesvol verstuurd');
       })
       .catch(error => {
-        agent.add('Call in de fout ' + error);
+        agent.add(`error: ${error}`);
       });
   }
 

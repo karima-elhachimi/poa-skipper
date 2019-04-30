@@ -118,7 +118,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1556643162799" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1556643591146" />
     <property name="last_opened_file_path" value="D:/../test-projects/chatbottest" />
     <property name="node.js.detected.package.standard" value="true" />
     <property name="node.js.path.for.package.standard" value="project" />
@@ -186,7 +186,7 @@
       <workItem from="1554064987925" duration="1613000" />
       <workItem from="1554105251219" duration="1365000" />
       <workItem from="1556005637419" duration="1330000" />
-      <workItem from="1556638343105" duration="4576000" />
+      <workItem from="1556638343105" duration="4917000" />
     </task>
     <task id="LOCAL-00001" summary="test parameters received">
       <created>1556638913387</created>
@@ -220,7 +220,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="92238000" />
+    <option name="totallyTimeSpent" value="92579000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
