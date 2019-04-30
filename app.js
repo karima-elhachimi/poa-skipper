@@ -125,13 +125,15 @@ app.post('/fulfillment', express.json(), (request, response) => {
       sequenceNbr: execution
     }
 
-    const url='https://apps-test.portofantwerp.com/apics-apica/api/v1/lockconfigurations/ZAS';
+    const url='https://apps-dev.portofantwerp.com/apics-apica/api/v1/lockpassages';
 
-    axios.get(url)
+    axios.post(url, JSON.stringify(params))
       .then(res => {
         agent.add('Call succesvol verstuurd');
+      })
+      .catch(error => {
+        agent.add('Call in de fout ' + error);
       });
-    //http.send(JSON.stringify(params));
   }
 
   // Run the proper function handler based on the matched Dialogflow intent name
