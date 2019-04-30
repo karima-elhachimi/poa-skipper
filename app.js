@@ -127,7 +127,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
 
     const url='https://apps-dev.portofantwerp.com/apics-apica/api/v1/lockpassages';
 
-    axios.post(url, JSON.stringify(params))
+    return axios.post(url, JSON.stringify(params))
       .then(res => {
         agent.add('Call succesvol verstuurd');
       })
