@@ -4,7 +4,8 @@
 
 const express = require('express');
 const cors = require('cors');
-const app = express()
+const app = express();
+const axios = require('axios');
 
 app.use(cors());
 app.use(function(req, res, next) {
@@ -124,17 +125,13 @@ app.post('/fulfillment', express.json(), (request, response) => {
       sequenceNbr: execution
     }
 
-    const http = new XMLHttpRequest();
     const url='https://apps-test.portofantwerp.com/apics-apica/api/v1/lockconfigurations/ZAS';
-    http.open("GET", url, true);
-    http.send();
-    //http.open("POST", url, true);
-    //http.send(JSON.stringify(params));
-    http.onreadystatechange=(e)=>{
-      console.log(http.responseText)
 
-      agent.add('Call ontvangen met http code ' + http.responseText + '');
-    }
+    axios.get(url)
+      .then(res => {
+        agent.add('Call succesvol verstuurd');
+      });
+    //http.send(JSON.stringify(params));
   }
 
   // Run the proper function handler based on the matched Dialogflow intent name
