@@ -120,8 +120,8 @@ app.post('/fulfillment', express.json(), (request, response) => {
 
     const params = {
       shipName: shipName,
-      lockName: lockName,
-      execution: execution
+      lockCode: lockName,
+      sequenceNbr: execution
     }
 
     const http = new XMLHttpRequest();
