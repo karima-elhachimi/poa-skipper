@@ -118,7 +118,23 @@ app.post('/fulfillment', express.json(), (request, response) => {
     let shipName = agent.parameters.ShipName.toUpperCase();
     let execution = agent.parameters.ExecutionNumber;
 
-    agent.add('Call ontvangen ! ' + lockName + ' - ' + shipName + ' - ' + execution);
+    const params = {
+      shipName: shipName,
+      lockName: lockName,
+      execution: execution
+    }
+
+    const http = new XMLHttpRequest();
+    const url='https://apps-test.portofantwerp.com/apics-apica/api/v1/lockconfigurations/ZAS';
+    http.open("GET", url, true);
+    http.send();
+    //http.open("POST", url, true);
+    //http.send(JSON.stringify(params));
+    http.onreadystatechange=(e)=>{
+      console.log(http.responseText)
+
+      agent.add('Call ontvangen met http code ' + http.responseText + '');
+    }
   }
 
   // Run the proper function handler based on the matched Dialogflow intent name
