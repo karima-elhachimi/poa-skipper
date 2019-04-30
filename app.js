@@ -114,7 +114,11 @@ app.post('/fulfillment', express.json(), (request, response) => {
   }
 
   function postShipToBackend(agent) {
-    agent.add('Call ontvangen!');
+    let lockName = agent.parameters.LockName.toUpperCase();
+    let shipName = agent.parameters.ShipName.toUpperCase();
+    let execution = agent.parameters.ExecutionNumber;
+
+    agent.add('Call ontvangen ! ' + lockName + ' - ' + shipName + ' - ' + execution);
   }
 
   // Run the proper function handler based on the matched Dialogflow intent name
