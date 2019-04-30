@@ -23,6 +23,9 @@ module.exports = class FulfillmentHelpers {
 
     //helpers voor de intent handlers
 
+    createQuayPath(quaynumber){
+        return `/apics/quay/${quaynumber}`;
+    }
     createLatAndLongSearchParams(city) {
         return `/search?q=${city}&format=json&limit=1`;
     }
