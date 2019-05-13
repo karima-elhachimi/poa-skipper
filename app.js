@@ -93,7 +93,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
     console.log(`lock details ${lockCodeMap.get(lockName)}`);
     return fulfill.respondWithLockInformation(lockName).then(res => {
 
-      agent.add(`Ik vraag de details op voor de ${lockName}`);
+      agent.add(`${res}`);
 
     })
   }
@@ -110,6 +110,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
   function executionDetails(agent) {
     let lock = agent.parameters.paramSluis;
     agent.add(`Ik antwoord binnenkort met schutting details voor ${lock}`);
+    return fulfill.
   }
 
   function respondWithQuayInfo(agent) {

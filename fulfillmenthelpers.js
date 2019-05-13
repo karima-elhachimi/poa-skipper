@@ -33,8 +33,14 @@ module.exports = class FulfillmentHelpers {
     requestQuayInformationById(quaynumber) {
         let url = this.getFullUrl(this.createQuayPath(quaynumber, this.apicsHost));
         return axios.get(url)
-        .then(res => console.log)
+        
     }
+
+    requestLockExecutionDetail(executionId){
+        let url = this.getFullUrl(this.createGetLockExecutionPath(executionId, this.apicsHost));
+        return this.requestApicsData(url);
+    }
+
 
     requestLatandLonData(location) {
         
