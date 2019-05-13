@@ -140,9 +140,9 @@ module.exports = class FulfillmentHelpers {
         return `ZAS`;
     }
 
-    createGetLockExecutionsPath(lockname) {
-        let code = this.getLockCode(lockname);
-        return `/apics/lockexecutions/${code}`;
+    createGetLockExecutionsPath(lockCode) {
+
+        return `/apics/lockexecutions/${lockCode}`;
     }
 
     createGetLockExecutionPath(executionId) {
