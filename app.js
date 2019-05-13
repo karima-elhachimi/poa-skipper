@@ -109,7 +109,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
 
   function executionDetails(agent) {
     let lock = agent.parameters.paramSluis;
-    agent.add(`Ik antwoord binnenkort met schutting details voor ${lock}`);
+  
     return fulfill.requestLockExecutionDetail(lock).then(res => {
       agent.add(`executions: ${res}`)
     })

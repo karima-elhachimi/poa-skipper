@@ -73,7 +73,7 @@ module.exports = class FulfillmentHelpers {
     createNauticalParams(...params) {
 
         if(params === 'all') {
-            return 'airTemperature,';
+            return 'airTemperature,windSpeed,windDirection,visibility,swellHeight';
         }
         let paramString;
         for (let i = 0; i < params; i++) {
@@ -168,13 +168,12 @@ module.exports = class FulfillmentHelpers {
                     'Content-Type': 'application/json',
                 }
             };
-
             request(options, function (error, response, body) {
                 if (error) {
                     throw new Error(error)
                     reject(error);
                 }
-                console.log(body);
+                console.log(`to be resolved: ${body}`);
                 resolve(body);
             });
         })
@@ -187,7 +186,7 @@ module.exports = class FulfillmentHelpers {
     }
 
     requestLockExecutions(lock) {
-        let lockExecutionsPath = this.createGetLockExecutionsPath(lock.lockCode);
+        let lockExecutionsPath = this.createGetLockExecutionsPath(lock);
         let url = this.getFullUrl(lockExecutionsPath, this.apicsHost);
         return this.requestApicsData(url);
     }
