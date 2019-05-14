@@ -216,10 +216,9 @@ module.exports = class FulfillmentHelpers {
 
     formatAvailableQuay(rawQuayData) {
         let response = '';
-        for(let quay in rawQuayData) {
-            response += `\nKaainummer: ${quay.quayNumber}, beschikbaar van: ${quay.availableFrom} tot ${quay.availableTill}`;
-        }
-
+        rawQuayData.foreach(quay => {
+            response += `Kaainr: ${quay.quayNumber}, beschikbaar van ${quay.availableFrom} tot ${quay.availableTill}.`
+        });
         return response;
     }
 
@@ -235,4 +234,11 @@ module.exports = class FulfillmentHelpers {
 
         return format;
     }
+}
+
+function newFunction(rawQuayData, response) {
+    for (let quay in rawQuayData) {
+        response += `\nKaainummer: ${quay.quayNumber}, beschikbaar van: ${quay.availableFrom} tot ${quay.availableTill}`;
+    }
+    return response;
 }
