@@ -89,6 +89,7 @@ module.exports = class FulfillmentHelpers {
             console.log(`#requestApicsData response: ${res}`);
             return this.formatAvailableQuay(JSON.parse(res));
         })
+        .catch(e => console.log(`#requestApicsData couldn't get availableQuays. Error: ${e}`))
     }
 
     requestQuayInformationById(quaynumber) {
@@ -217,11 +218,12 @@ module.exports = class FulfillmentHelpers {
     formatAvailableQuay(rawQuayData) {
         let response = '';
         rawQuayData.forEach(quay => {
+            //todo: herformateren dat er gechecked wordt of er wel degelijk een beschikbaar van tot veld is
             const from = Date.parse(quay.availableFrom);
             const till = Date.parse(quay.availableTill);
-            response += `\nKaainr: ${quay.quayNumber}, beschikbaar van ${from.toDateString()} tot ${till.toDateString()}.\n contact: ${quay.contact}`
+            response += `\nKaainr: ${quay.quayNumber}, beschikbaar van ${from} tot ${till}. \nContact: ${quay.contact}`
         });
-        response += `Vergeet niet om een dokmeester te contacteren om een reservatie te regelen.`
+        response += `\nVergeet niet om een dokmeester te contacteren om een reservatie te regelen.`
         return response;
     }
 
