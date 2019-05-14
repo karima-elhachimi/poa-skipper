@@ -219,9 +219,9 @@ module.exports = class FulfillmentHelpers {
         let response = '';
         rawQuayData.forEach(quay => {
             //todo: herformateren dat er gechecked wordt of er wel degelijk een beschikbaar van tot veld is
-            const from = Date.parse(quay.availableFrom);
+            const from = new Date(quay.availableFrom);
             const till = Date.parse(quay.availableTill);
-            response += `\nKaainr: ${quay.quayNumber}, beschikbaar van ${from} tot ${till}. \nContact: ${quay.contact}`
+            response += `\nKaainr: ${quay.quayNumber}, beschikbaar van ${from.toString()} tot ${till}. \nContact: ${quay.contact}`
         });
         response += `\nVergeet niet om een dokmeester te contacteren om een reservatie te regelen.`
         return response;
