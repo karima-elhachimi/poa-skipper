@@ -144,9 +144,9 @@ app.post('/fulfillment', express.json(), (request, response) => {
   intentMap.set('sluis.toestand.algemeen - yes', allLocks);
   intentMap.set('sluis.toestand.detail', lockDetails )
   intentMap.set('sluis.schutting.details', executionDetails)
-  intentMap.set('informatie.ligplaats - check kaainr - yes', respondWithQuayInfo)
   intentMap.set('informatie.ligplaats - alternatief', respondWithAvailableQuay)
-  intentMap.set('informatie.ligplaats - alternatief? yes', respondWithAvailableQuay)
+  intentMap.set('informatie.ligplaats - check kaainr - yes', respondWithQuayInfo)
+  intentMap.set('informatie.ligplaats - check kaainr? no', respondWithAvailableQuay)
 
   agent.handleRequest(intentMap);
 });
