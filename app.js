@@ -133,7 +133,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
     return fulfill.requestAvailableQuays(location)
     .then(res => {
       console.log(`#respondWithAvailableQuay: ${res}`);
-      agent.add(`available quay: ${res[0]}`);
+      agent.add(`available quay: ${res}`);
     })
   }
 

@@ -84,7 +84,10 @@ module.exports = class FulfillmentHelpers {
 
     requestAvailableQuays(location){
         let url = this.getFullUrl(this.createQuaysPath(location), this.apicsHost);
-        return this.requestApicsData(url);
+        return this.requestApicsData(url)
+        .then(res => {
+            return this.formatAvailableQuay(res);
+        })
     }
 
     requestQuayInformationById(quaynumber) {
@@ -208,6 +211,15 @@ module.exports = class FulfillmentHelpers {
 
     formatWindForecast(forecastData){
 
+    }
+
+    formatAvailableQuay(rawQuayData) {
+        let response = '';
+        for(let quay in rawQuayData) {
+            response += `\nKaainummer: ${quay.quayNumber}, beschikbaar van: ${quay.availableFrom} tot ${quay.availableTill}`;
+        }
+
+        return response;
     }
 
     formatLocks(locks) {
