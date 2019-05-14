@@ -36,6 +36,12 @@ const dfAgent = new df();
 const lockCodes = require('./lockcodes');
 const lockCodeMap = lockCodes.lockMap;
 
+//todo: implement initial hello
+app.get('+/chat/hello')
+
+app.get('/weather/forecast/:params', (req, res) => {
+
+});
 
 app.get('/chat/:text', (req, res) =>{
   dfAgent.sendTextMessageToDialogFlow(req.params.text, "localhost")
@@ -112,9 +118,9 @@ app.post('/fulfillment', express.json(), (request, response) => {
 
   function executionDetails(agent) {
     let lock = agent.parameters.paramSluis;
-  
+
     return fulfill.requestLockExecutionDetail(lock).then(res => {
-      agent.add(`executions: ${res}`)
+      agent.add(`Details voor de eerstvolgende schutting van ${lock}: ${res[0]}`)
     })
   }
 
@@ -128,14 +134,17 @@ app.post('/fulfillment', express.json(), (request, response) => {
   }
 
 
-  function respondWithAvailableQuay(agent) {
-    const location = agent.parameters.paramCity? agent.parameters.paramCity : null;
+  function respondWithAvailableQuays(agent) {
+    const location = agent.parameters.paramDok? agent.parameters.paramDok : null;
     return fulfill.requestAvailableQuays(location)
     .then(res => {
       console.log(`#respondWithAvailableQuay: ${res}`);
       agent.add(`Volgende kaainummers zijn beschikbaar: \n ${res}`);
     })
   }
+
+
+  //todo: add option to clear message history on firestore
 
   // Run the proper function handler based on the matched Dialogflow intent name
   let intentMap = new Map()
@@ -145,9 +154,10 @@ app.post('/fulfillment', express.json(), (request, response) => {
   intentMap.set('sluis.toestand.algemeen - yes', allLocks);
   intentMap.set('sluis.toestand.detail', lockDetails )
   intentMap.set('sluis.schutting.details', executionDetails)
-  intentMap.set('informatie.ligplaats - alternatief', respondWithAvailableQuay)
+  intentMap.set('informatie.ligplaats - alternatief', respondWithAvailableQuays)
   intentMap.set('informatie.ligplaats - check kaainr - yes', respondWithQuayInfo)
-  intentMap.set('informatie.ligplaats - check kaainr? no', respondWithAvailableQuay)
+  intentMap.set('informatie.ligplaats - check kaainr? no', respondWithAvailableQuays)
+  intentMap.set('informatie.ligplaats.locatie', respondWithAvailableQuays)
 
   agent.handleRequest(intentMap);
 });
