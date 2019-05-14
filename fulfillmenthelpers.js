@@ -4,6 +4,7 @@ const dotenv = require('dotenv').config()
 const axios = require('axios');
 const request = require('request');
 const URL = require('url').URL;
+const moment = require('moment');
 
 module.exports = class FulfillmentHelpers {
     constructor() {
@@ -219,8 +220,8 @@ module.exports = class FulfillmentHelpers {
         let response = '';
         rawQuayData.forEach(quay => {
             //todo: herformateren dat er gechecked wordt of er wel degelijk een beschikbaar van tot veld is
-            const from = new Date(quay.availableFrom);
-            const till = Date.parse(quay.availableTill);
+            const from = moment(quay.availableFrom);
+            const till = moment(quay.availableTill);
             response += `\nKaainr: ${quay.quayNumber}, beschikbaar van ${from.toString()} tot ${till}. \nContact: ${quay.contact}`
         });
         response += `\nVergeet niet om een dokmeester te contacteren om een reservatie te regelen.`
@@ -241,9 +242,3 @@ module.exports = class FulfillmentHelpers {
     }
 }
 
-function newFunction(rawQuayData, response) {
-    for (let quay in rawQuayData) {
-        response += `\nKaainummer: ${quay.quayNumber}, beschikbaar van: ${quay.availableFrom} tot ${quay.availableTill}`;
-    }
-    return response;
-}
