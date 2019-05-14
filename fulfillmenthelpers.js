@@ -37,9 +37,9 @@ module.exports = class FulfillmentHelpers {
     }
     createQuaysPath(location){
         if(location)
-            return `apics/quays/location`;
+            return `/apics/quays/location`;
         else    
-            return `apics/quays`;
+            return `/apics/quays`;
     }
 
     createGetLocksPath() {
