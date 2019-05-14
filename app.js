@@ -132,6 +132,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
     const location = agent.parameters.paramCity? agent.parameters.paramCity : null;
     fulfill.requestAvailableQuays(location)
     .then(res => {
+      console.log(`#respondWithAvailableQuay: ${res}`);
       agent.add(`available quays: ${res}`);
     })
   }
