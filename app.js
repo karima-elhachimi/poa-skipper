@@ -83,7 +83,8 @@ app.post('/fulfillment', express.json(), (request, response) => {
     //agent.add(`Ik antwoord binnenkort met alle schuttingen voor ${lock}`);
     return fulfill.requestLockExecutions(lock)
       .then(res => {
-        console.log(`request all executions response: ${res}`);
+        agent.add(`request all executions response: ${res}`);
+    
 
       }).catch(er => agent.add(`Het ophalen van de schuttingen voor ${lock} is mislukt. error: ${er}`));
   }
