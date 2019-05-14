@@ -35,9 +35,10 @@ module.exports = class FulfillmentHelpers {
     createQuayPath(quaynumber){
         return `/apics/quay/${quaynumber}`;
     }
+
     createQuaysPath(location){
         if(location)
-            return `/apics/quays/location`;
+            return `/apics/quays/${location}`;
         else    
             return `/apics/quays`;
     }
@@ -56,13 +57,8 @@ module.exports = class FulfillmentHelpers {
         return `/apics/lockexecution/${executionId}`;
     }    
     createGetLockExecutionsPath(lockCode) {
-
         return `/apics/lockexecutions/${lockCode}`;
     }    
-    createGetLockExecutionsPath(lockname) {
-        let code = this.getLockCode(lockname);
-        return `/apics/lockexecutions/${code}`;
-    }
     
     createNauticalSearchPath(lat, lon, params) {
         return `/point?lat=${lat}&lng=${lon}&source=sg&params=${params}`
@@ -94,7 +90,7 @@ module.exports = class FulfillmentHelpers {
     }
 
     requestQuayInformationById(quaynumber) {
-        let url = this.getFullUrl(this.createQuayPath(quaynumber, this.apicsHost));
+        let url = this.getFullUrl(this.createQuayPath(quaynumber), this.apicsHost);
         return axios.get(url)      
     }
 
