@@ -217,7 +217,9 @@ module.exports = class FulfillmentHelpers {
     formatAvailableQuay(rawQuayData) {
         let response = '';
         rawQuayData.forEach(quay => {
-            response += `Kaainr: ${quay.quayNumber}, beschikbaar van ${quay.availableFrom} tot ${quay.availableTill}.`
+            const from = new Date(quay.availableFrom);
+            const till = new Date(quay.availableTill);
+            response += `\nKaainr: ${quay.quayNumber}, beschikbaar van ${from.toLocaleDateString()} tot ${till.toLocaleDateString()}.`
         });
         return response;
     }
