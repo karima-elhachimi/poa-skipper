@@ -220,9 +220,9 @@ module.exports = class FulfillmentHelpers {
         let response = '';
         rawQuayData.forEach(quay => {
             //todo: herformateren dat er gechecked wordt of er wel degelijk een beschikbaar van tot veld is
-            const from = moment(quay.availableFrom);
-            const till = moment(quay.availableTill);
-            response += `\nKaainr: ${quay.quayNumber}, beschikbaar van ${from.toString()} tot ${till}. \nContact: ${quay.contact}`
+            const from = moment(quay.availableFrom).format('L, LTS');
+            const till = moment(quay.availableTill).format('L, LTS')
+            response += `\nKaainr: ${quay.quayNumber}, beschikbaar van ${from} tot ${till}. \nContact: ${quay.contact}`
         });
         response += `\nVergeet niet om een dokmeester te contacteren om een reservatie te regelen.`
         return response;
