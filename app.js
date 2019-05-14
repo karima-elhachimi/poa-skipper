@@ -92,7 +92,11 @@ app.post('/fulfillment', express.json(), (request, response) => {
   function lockDetails(agent){
     let lockName = agent.parameters.paramSluis.toLowerCase();
     console.log(`lock details ${lockCodeMap.get(lockName)}`);
-    agent.add(`Ik vraag de details op voor de ${lockName}`);
+    return fulfill.respondWithLockInformation(lockName).then(res => {
+
+      agent.add(`${res}`);
+
+    })
   }
 
   function allLocks(agent) {
@@ -106,17 +110,21 @@ app.post('/fulfillment', express.json(), (request, response) => {
 
   function executionDetails(agent) {
     let lock = agent.parameters.paramSluis;
-    agent.add(`Ik antwoord binnenkort met schutting details voor ${lock}`);
+  
+    return fulfill.requestLockExecutionDetail(lock).then(res => {
+      agent.add(`executions: ${res}`)
+    })
   }
 
   function respondWithQuayInfo(agent) {
     let quaynr = agent.parameters.paramKaainummer;
-    agent.add(`callback fired from backend, kaainr: ${quaynr}`);
+    return fulfill.requestQuayInformationById(quaynr)
+    .then(res => {
+      agent.add(`callback: ${res}`);
+    })
+    
   }
 
-  function postShipToBackend(agent) {
-    agent.add('Call ontvangen!');
-  }
 
   // Run the proper function handler based on the matched Dialogflow intent name
   let intentMap = new Map()
@@ -127,8 +135,6 @@ app.post('/fulfillment', express.json(), (request, response) => {
   intentMap.set('sluis.toestand.detail', lockDetails )
   intentMap.set('sluis.schutting.details', executionDetails)
   intentMap.set('informatie.ligplaats - check kaainr - yes', respondWithQuayInfo)
-
-  intentMap.set('planning.planShip', postShipToBackend)
 
   agent.handleRequest(intentMap);
 });

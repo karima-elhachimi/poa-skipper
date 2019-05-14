@@ -30,6 +30,18 @@ module.exports = class FulfillmentHelpers {
         return `/search?q=${city}&format=json&limit=1`;
     }
 
+    requestQuayInformationById(quaynumber) {
+        let url = this.getFullUrl(this.createQuayPath(quaynumber, this.apicsHost));
+        return axios.get(url)
+        
+    }
+
+    requestLockExecutionDetail(executionId){
+        let url = this.getFullUrl(this.createGetLockExecutionPath(executionId, this.apicsHost));
+        return this.requestApicsData(url);
+    }
+
+
     requestLatandLonData(location) {
         
         let url = this.getFullUrl(this.createLatAndLongSearchParams(location), this.geoHost);
@@ -59,6 +71,10 @@ module.exports = class FulfillmentHelpers {
     }
 
     createNauticalParams(...params) {
+
+        if(params === 'all') {
+            return 'airTemperature,windSpeed,windDirection,visibility,swellHeight';
+        }
         let paramString;
         for (let i = 0; i < params; i++) {
             paramString += `, ${params[i]}`
@@ -67,19 +83,21 @@ module.exports = class FulfillmentHelpers {
         return params;
     }
 
+    respondWithLockInformation(lockCode){
+        const url = this.getFullUrl(this.createGetLockPath(lockCode), this.apicsHost);
+        return this.requestApicsData(url).then(res => {
+            return res;
+        })
+    }
+
     respondWithNauticalWeatherData(agent) {
         console.log('#respondWithNauticalWeatherData started');
         let city = agent.parameters.paramLocatie;
         console.log(`city: ${city}`)
-        //agent.add(`Momentje, ik ben de nautische weergegevens voor ${city} aan het zoeken...`)
-        //eerst latitude en longitude ophalen
         return this.requestLatandLonData(city)
             .then(latlon => {
-                //todo: url samenstellen voor het zoeken met createNauticalParams
-                let nauticalWeatherParams = "airTemperature,windSpeed" //https://docs.stormglass.io/#point-request
-                //todo: nautical weather params maken op basis van params uit df
+                let nauticalWeatherParams = this.createNauticalParams('all'); //https://docs.stormglass.io/#point-request
                 let path = this.createNauticalSearchPath(latlon[0], latlon[1], nauticalWeatherParams)
-
                 let url = this.getFullUrl(path, this.weatherHost);
                 console.log(`#respondWithNauticalWeatherdata url: ${url}`);
                 return axios.get(url, {
@@ -94,20 +112,37 @@ module.exports = class FulfillmentHelpers {
     formatWeatherForecast(forecastData) {
         let temp = forecastData.airTemperature[0].value;
         let wk = forecastData.windSpeed[0].value;
+        let wd = forecastData.windDirection[0].value;
+        let vis = forecastData.visibility[0].value;
+        let water = forecastData.swellHeight[0].value;
         let text = `temperatuur: ${temp} graden celcius
     windkracht: ${wk} meter per seconde.`;
         console.log(`#formatWeatherForecast: ${text}`);
         return text;
     }
 
+    formatWaterForecast(forecastData){
+
+
+    }
+
+    formatVisibilityForecast(forecastData){
+
+    }
+
+    formatWindForecast(forecastData){
+
+    }
+
+
     getLockCode(lockname) {
         //todo: uitwerken mapping tussen sluisnaam en sluidcode
         return `ZAS`;
     }
 
-    createGetLockExecutionsPath(lockname) {
-        let code = this.getLockCode(lockname);
-        return `/apics/lockexecutions/${code}`;
+    createGetLockExecutionsPath(lockCode) {
+
+        return `/apics/lockexecutions/${lockCode}`;
     }
 
     createGetLockExecutionPath(executionId) {
@@ -133,13 +168,12 @@ module.exports = class FulfillmentHelpers {
                     'Content-Type': 'application/json',
                 }
             };
-
             request(options, function (error, response, body) {
                 if (error) {
                     throw new Error(error)
                     reject(error);
                 }
-                console.log(body);
+                console.log(`to be resolved: ${body}`);
                 resolve(body);
             });
         })
@@ -152,7 +186,7 @@ module.exports = class FulfillmentHelpers {
     }
 
     requestLockExecutions(lock) {
-        let lockExecutionsPath = this.createGetLockExecutionsPath(lock.lockCode);
+        let lockExecutionsPath = this.createGetLockExecutionsPath(lock);
         let url = this.getFullUrl(lockExecutionsPath, this.apicsHost);
         return this.requestApicsData(url);
     }
