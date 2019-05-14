@@ -83,8 +83,15 @@ app.post('/fulfillment', express.json(), (request, response) => {
     //agent.add(`Ik antwoord binnenkort met alle schuttingen voor ${lock}`);
     return fulfill.requestLockExecutions(lock)
       .then(res => {
+<<<<<<< Updated upstream
         console.log(`request all executions response: ${res}`);
 
+=======
+        // todo: format response to a readable format
+        // todo: send multiple messages
+        agent.add(`request all executions response: ${res}`);
+  
+>>>>>>> Stashed changes
       }).catch(er => agent.add(`Het ophalen van de schuttingen voor ${lock} is mislukt. error: ${er}`));
   }
 
@@ -125,6 +132,14 @@ app.post('/fulfillment', express.json(), (request, response) => {
   }
 
 
+  function respondWithAvailableQuay(agent) {
+    const location = agent.parameters.paramCity? agent.parameters.paramCity : null;
+    fulfill.requestAvailableQuays(location)
+    .then(res => {
+      agent.add(`available quays: ${res}`);
+    })
+  }
+
   // Run the proper function handler based on the matched Dialogflow intent name
   let intentMap = new Map()
  
@@ -134,6 +149,8 @@ app.post('/fulfillment', express.json(), (request, response) => {
   intentMap.set('sluis.toestand.detail', lockDetails )
   intentMap.set('sluis.schutting.details', executionDetails)
   intentMap.set('informatie.ligplaats - check kaainr - yes', respondWithQuayInfo)
+  intentMap.set('informatie.ligplaats - alternatief', respondWithAvailableQuay)
+  intentMap.set('informatie.ligplaats - alternatief? yes', respondWithAvailableQuay)
 
   agent.handleRequest(intentMap);
 });

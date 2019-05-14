@@ -14,6 +14,14 @@ module.exports = class FulfillmentHelpers {
         console.log(`helper initiated with: ${this.weatherHost} ${this.weatherApiKey}`);
      }
 
+     createNauticalParams(...params) {
+        let paramString;
+        for (let i = 0; i < params; i++) {
+            paramString += `, ${params[i]}`
+        }
+
+        return params;
+    }
 
     getFullUrl(path, host) {
         let url = new URL(path, host);
@@ -26,21 +34,68 @@ module.exports = class FulfillmentHelpers {
     createQuayPath(quaynumber){
         return `/apics/quay/${quaynumber}`;
     }
+    createQuaysPath(location){
+        if(location)
+            return `apics/quays/location`;
+        else    
+            return `apics/quays`;
+    }
+
+    createGetLocksPath() {
+        return `/apics/locks`;
+    }
+    createGetLockPath(lockCode) {
+        return `/apics/lock/${lockCode}`;
+    }
     createLatAndLongSearchParams(city) {
         return `/search?q=${city}&format=json&limit=1`;
     }
 
+    createGetLockExecutionPath(executionId) {
+        return `/apics/lockexecution/${executionId}`;
+    }    
+    createGetLockExecutionsPath(lockCode) {
+
+        return `/apics/lockexecutions/${lockCode}`;
+    }    
+    createGetLockExecutionsPath(lockname) {
+        let code = this.getLockCode(lockname);
+        return `/apics/lockexecutions/${code}`;
+    }
+    
+    createNauticalSearchPath(lat, lon, params) {
+        return `/point?lat=${lat}&lng=${lon}&source=sg&params=${params}`
+    }
+    createNauticalSearchPath(lat, lon, params) {
+        return `/point?lat=${lat}&lng=${lon}&source=sg&params=${params}`
+    }
+    createNauticalParams(...params) {
+
+        if(params === 'all') {
+            return 'airTemperature,windSpeed,windDirection,visibility,swellHeight';
+        }
+        let paramString;
+        for (let i = 0; i < params; i++) {
+            paramString += `, ${params[i]}`
+        }
+
+        return params;
+    }
+
+    requestAvailableQuays(location){
+        let url = this.getFullUrl(this.createQuaysPath(location), this.apicsHost);
+        return this.requestApicsData(url);
+    }
+
     requestQuayInformationById(quaynumber) {
         let url = this.getFullUrl(this.createQuayPath(quaynumber, this.apicsHost));
-        return axios.get(url)
-        
+        return axios.get(url)      
     }
 
     requestLockExecutionDetail(executionId){
         let url = this.getFullUrl(this.createGetLockExecutionPath(executionId, this.apicsHost));
         return this.requestApicsData(url);
     }
-
 
     requestLatandLonData(location) {
         
@@ -65,31 +120,7 @@ module.exports = class FulfillmentHelpers {
         }
         return axios.get(url)
     }
-
-    createNauticalSearchPath(lat, lon, params) {
-        return `/point?lat=${lat}&lng=${lon}&source=sg&params=${params}`
-    }
-
-    createNauticalParams(...params) {
-
-        if(params === 'all') {
-            return 'airTemperature,windSpeed,windDirection,visibility,swellHeight';
-        }
-        let paramString;
-        for (let i = 0; i < params; i++) {
-            paramString += `, ${params[i]}`
-        }
-
-        return params;
-    }
-
-    respondWithLockInformation(lockCode){
-        const url = this.getFullUrl(this.createGetLockPath(lockCode), this.apicsHost);
-        return this.requestApicsData(url).then(res => {
-            return res;
-        })
-    }
-
+  
     respondWithNauticalWeatherData(agent) {
         console.log('#respondWithNauticalWeatherData started');
         let city = agent.parameters.paramLocatie;
@@ -97,6 +128,9 @@ module.exports = class FulfillmentHelpers {
         return this.requestLatandLonData(city)
             .then(latlon => {
                 let nauticalWeatherParams = this.createNauticalParams('all'); //https://docs.stormglass.io/#point-request
+
+                //todo: url samenstellen voor het zoeken met createNauticalParams @low
+                let nauticalWeatherParams = "airTemperature,windSpeed" //https://docs.stormglass.io/#point-request
                 let path = this.createNauticalSearchPath(latlon[0], latlon[1], nauticalWeatherParams)
                 let url = this.getFullUrl(path, this.weatherHost);
                 console.log(`#respondWithNauticalWeatherdata url: ${url}`);
@@ -107,56 +141,16 @@ module.exports = class FulfillmentHelpers {
                     }
                 })
             })
+    } 
+   
+    respondWithLockInformation(lockCode){
+        const url = this.getFullUrl(this.createGetLockPath(lockCode), this.apicsHost);
+        return this.requestApicsData(url).then(res => {
+            return res;
+        })
     }
 
-    formatWeatherForecast(forecastData) {
-        let temp = forecastData.airTemperature[0].value;
-        let wk = forecastData.windSpeed[0].value;
-        let wd = forecastData.windDirection[0].value;
-        let vis = forecastData.visibility[0].value;
-        let water = forecastData.swellHeight[0].value;
-        let text = `temperatuur: ${temp} graden celcius
-    windkracht: ${wk} meter per seconde.`;
-        console.log(`#formatWeatherForecast: ${text}`);
-        return text;
-    }
-
-    formatWaterForecast(forecastData){
-
-
-    }
-
-    formatVisibilityForecast(forecastData){
-
-    }
-
-    formatWindForecast(forecastData){
-
-    }
-
-
-    getLockCode(lockname) {
-        //todo: uitwerken mapping tussen sluisnaam en sluidcode
-        return `ZAS`;
-    }
-
-    createGetLockExecutionsPath(lockCode) {
-
-        return `/apics/lockexecutions/${lockCode}`;
-    }
-
-    createGetLockExecutionPath(executionId) {
-        return `/apics/lockexecution/${executionId}`;
-    }
-
-    createGetLocksPath() {
-        return `/apics/locks`;
-    }
-
-    createGetLockPath(lockCode) {
-        return `/apics/lock/${lockCode}`;
-    }
-
+    
     requestApicsData(url) {
         console.log(`apics request url: ${url}`);
         return new Promise((resolve, reject) => {
@@ -189,6 +183,31 @@ module.exports = class FulfillmentHelpers {
         let lockExecutionsPath = this.createGetLockExecutionsPath(lock);
         let url = this.getFullUrl(lockExecutionsPath, this.apicsHost);
         return this.requestApicsData(url);
+    }
+
+    
+    formatWeatherForecast(forecastData) {
+        let temp = forecastData.airTemperature[0].value;
+        let wk = forecastData.windSpeed[0].value;
+        let wd = forecastData.windDirection[0].value;
+        let vis = forecastData.visibility[0].value;
+        let water = forecastData.swellHeight[0].value;
+        let text = `temperatuur: ${temp} graden celcius
+    windkracht: ${wk} meter per seconde.`;
+        console.log(`#formatWeatherForecast: ${text}`);
+        return text;
+    }
+
+    formatWaterForecast(forecastData){
+
+    }
+
+    formatVisibilityForecast(forecastData){
+
+    }
+
+    formatWindForecast(forecastData){
+
     }
 
     formatLocks(locks) {
