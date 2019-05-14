@@ -83,15 +83,11 @@ app.post('/fulfillment', express.json(), (request, response) => {
     //agent.add(`Ik antwoord binnenkort met alle schuttingen voor ${lock}`);
     return fulfill.requestLockExecutions(lock)
       .then(res => {
-<<<<<<< Updated upstream
         console.log(`request all executions response: ${res}`);
-
-=======
         // todo: format response to a readable format
         // todo: send multiple messages
         agent.add(`request all executions response: ${res}`);
   
->>>>>>> Stashed changes
       }).catch(er => agent.add(`Het ophalen van de schuttingen voor ${lock} is mislukt. error: ${er}`));
   }
 
