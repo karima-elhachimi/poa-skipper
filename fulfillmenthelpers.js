@@ -86,6 +86,7 @@ module.exports = class FulfillmentHelpers {
         let url = this.getFullUrl(this.createQuaysPath(location), this.apicsHost);
         return this.requestApicsData(url)
         .then(res => {
+            console.log(`#requestApicsData response: ${res}`);
             return this.formatAvailableQuay(res);
         })
     }
