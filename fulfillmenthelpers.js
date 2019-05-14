@@ -87,7 +87,7 @@ module.exports = class FulfillmentHelpers {
         return this.requestApicsData(url)
         .then(res => {
             console.log(`#requestApicsData response: ${res}`);
-            return this.formatAvailableQuay(res);
+            return this.formatAvailableQuay(JSON.parse(res));
         })
     }
 
