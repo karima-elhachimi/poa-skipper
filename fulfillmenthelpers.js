@@ -219,7 +219,7 @@ module.exports = class FulfillmentHelpers {
         rawQuayData.forEach(quay => {
             const from = Date.parse(quay.availableFrom);
             const till = Date.parse(quay.availableTill);
-            response += `\nKaainr: ${quay.quayNumber}, beschikbaar van ${from.toDateString()} tot ${till.toDateString()}.`
+            response += `\nKaainr: ${quay.quayNumber}, beschikbaar van ${from.toDateString()} tot ${till.toDateString()}.\n contact: ${quay.contact}`
         });
         response += `Vergeet niet om een dokmeester te contacteren om een reservatie te regelen.`
         return response;
