@@ -210,12 +210,19 @@ module.exports = class FulfillmentHelpers {
 
     formatQuayInfo(rawQuay){
         let quay = JSON.parse(rawQuay);
-        let response = `Kaainummer ${quay.quayNumber} ` 
+        let response = [`Kaainummer ${quay.quayNumber}`, null];
         if(quay.status == 'available') {
-            response += `is beschikbaar van ${moment(quay.availableFrom).format('L, LTS')} tot ${moment(quay.availableTill)}`
+            response[1] = true
+            response[0] += `is beschikbaar van ${moment(quay.availableFrom).format('L, LTS')} tot ${moment(quay.availableTill).format('L, LTS')}`;
+            response[0] += `\n\n Contacteer ${quay.contact} om een reservatie aan te vragen.`;
+            
+        } else {
+            response[0] += `is onbeschikbaar. Wil je dat ik een beschikbare ligplaats voor je zoek?`
+            response[1] = false;
+
             
         }
-        return `Kaainummer: ${quay.quayNumber} is `
+        return response;
     }
     formatAvailableQuay(rawQuayData) {
         let response = '';
