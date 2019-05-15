@@ -128,7 +128,7 @@ module.exports = class FulfillmentHelpers {
                 let nauticalWeatherParams = this.createNauticalParams('all'); //https://docs.stormglass.io/#point-request
 
                 //todo: url samenstellen voor het zoeken met createNauticalParams @low
-                let nauticalWeatherParams = "airTemperature,windSpeed" //https://docs.stormglass.io/#point-request
+                //let nauticalWeatherParams = "airTemperature,windSpeed" //https://docs.stormglass.io/#point-request
                 let path = this.createNauticalSearchPath(latlon[0], latlon[1], nauticalWeatherParams)
                 let url = this.getFullUrl(path, this.weatherHost);
                 console.log(`#respondWithNauticalWeatherdata url: ${url}`);
@@ -191,7 +191,7 @@ module.exports = class FulfillmentHelpers {
         let vis = forecastData.visibility[0].value;
         let water = forecastData.swellHeight[0].value;
         let text = `temperatuur: ${temp} graden celcius
-    windkracht: ${wk} meter per seconde.`;
+                    windkracht: ${wk} meter per seconde.`;
         console.log(`#formatWeatherForecast: ${text}`);
         return text;
     }
