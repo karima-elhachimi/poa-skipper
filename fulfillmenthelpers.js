@@ -86,8 +86,8 @@ module.exports = class FulfillmentHelpers {
     requestQuayInformationById(quaynumber) {
         let url = this.getFullUrl(this.createQuayPath(quaynumber), this.apicsHost);
         return axios.get(url).then(res => {
-            console.log(`requestQuayInfo data response: ${res}`);
-            return this.formatQuayInfo(JSON.parse(res));
+            console.log(`requestQuayInfo data response: ${JSON.parse(JSON.stringify(res))}`);
+            return this.formatQuayInfo(res);
         })     
     }
 
