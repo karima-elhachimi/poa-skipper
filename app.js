@@ -140,7 +140,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
     return fulfill.requestAvailableQuays(location)
     .then(res => {
       console.log(`#respondWithAvailableQuay: ${res}`);
-      agent.add(`Volgende kaainummers zijn beschikbaar: \n ${res}`);
+      agent.add(`Volgende kaainummers zijn beschikbaar: \n\n ${res}`);
     })
   }
 

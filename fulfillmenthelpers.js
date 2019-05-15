@@ -84,7 +84,7 @@ module.exports = class FulfillmentHelpers {
         return this.requestApicsData(url)
         .then(res => {
             console.log(`#requestApicsData response: ${res}`);
-            return this.formatAvailableQuay(JSON.parse(res));
+            return this.formatAvailableQuay(res);
         })
         .catch(e => console.log(`#requestApicsData couldn't get availableQuays. Error: ${e}`))
     }
@@ -220,7 +220,7 @@ module.exports = class FulfillmentHelpers {
             const till = moment(quay.availableTill).format('L, LTS')
             response += `\n\nKaainr: ${quay.quayNumber}, beschikbaar van ${from} tot ${till}. \nContact: ${quay.contact}`
         });
-        response += `\nVergeet niet om een dokmeester te contacteren om een reservatie te regelen.`
+        response += `\n\nVergeet niet om een verantwoordelijke te contacteren om een reservatie te regelen.`
         return response;
     }
 
