@@ -210,8 +210,8 @@ module.exports = class FulfillmentHelpers {
     }
 
     formatQuayInfo(quay){
-        console.log(`#formatQuayInfo starts with = ${quay}`);
-        let response =  `Kaainummer ${quay.quayNumber}`;
+        console.log(`#formatQuayInfo starts with = ${quay.quayNumber}`);
+        let response =  `Kaainummer ${JSON.parse(quay).quayNumber}`;
         let available = false;
         if(quay.status == 'available') {
             available = true
