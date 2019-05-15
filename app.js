@@ -59,7 +59,8 @@ app.get('/', (req, res) => res.send('online'))
 
 
 app.post('/fulfillment', express.json(), (request, response) => {
-
+  let agent = new WebhookClient({ request: request, response: response });
+  
   function nauticalForecast (agent) {
     return fulfill.respondWithNauticalWeatherData(agent)
       .then(nautischeData => {
@@ -118,7 +119,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
       if(res[1]) {
         agent.add(res[0]);
       } else {
-        agent.context.set('informatieligplaats-alternatief', 5, {param: ''})
+        agent.context.set('informatieligplaats-alternatief', 5, {param: 'bla'})
         agent.add(res[0]);
       }
     })
