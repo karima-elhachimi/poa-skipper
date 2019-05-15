@@ -85,8 +85,8 @@ module.exports = class FulfillmentHelpers {
 
     requestQuayInformationById(quaynumber) {
         let url = this.getFullUrl(this.createQuayPath(quaynumber), this.apicsHost);
-        return axios.get(url).then(res => {
-            console.log(`requestQuayInfo data response: ${res.quayNumber}`);
+        return this.requestApicsData(url).then(res => {
+            console.log(`requestQuayInfo data response: ${JSON.parse(res.quayNumber)}`);
             return this.formatQuayInfo(res);
         })     
     }
@@ -209,8 +209,8 @@ module.exports = class FulfillmentHelpers {
 
     }
 
-    formatQuayInfo(rawQuay){
-        let quay = rawQuay;
+    formatQuayInfo(quay){
+        console.log(`#formatQuayInfo starts with = ${quay}`);
         let response =  [`Kaainummer ${quay.quayNumber}`, null];
         if(quay.status == 'available') {
             response[1] = true

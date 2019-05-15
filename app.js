@@ -134,7 +134,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
       } else {
         agent.context.set({
           'name':'informatieligplaats-alternatief',
-          'lifespan': 5
+          'lifespan': '5'
         });
         agent.add(res[0]);
       }
