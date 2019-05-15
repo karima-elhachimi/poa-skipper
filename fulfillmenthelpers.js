@@ -210,8 +210,8 @@ module.exports = class FulfillmentHelpers {
     }
 
     formatQuayInfo(rawQuay){
-        let quay = JSON.parse(rawQuay);
-        let response = [`Kaainummer ${quay.quayNumber}`, null];
+        let quay = rawQuay;
+        let response =  [`Kaainummer ${quay.quayNumber}`, null];
         if(quay.status == 'available') {
             response[1] = true
             response[0] += `is beschikbaar van ${moment(quay.availableFrom).format('L, LTS')} tot ${moment(quay.availableTill).format('L, LTS')}`;
@@ -223,6 +223,7 @@ module.exports = class FulfillmentHelpers {
 
             
         }
+    
         return response;
     }
     formatAvailableQuay(rawQuayData) {

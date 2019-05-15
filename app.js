@@ -128,6 +128,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
     let quaynr = agent.parameters.paramKaainummer;
     return fulfill.requestQuayInformationById(quaynr)
     .then(res => {
+      console.log(`#respondWithQuayInfo response: ${res[0]}`);
       if(res[1]) {
         agent.add(res[0]);
       } else {
