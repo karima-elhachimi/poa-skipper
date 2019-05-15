@@ -132,10 +132,10 @@ app.post('/fulfillment', express.json(), (request, response) => {
       if(res[1]) {
         agent.add(res[0]);
       } else {
-        agent.context.set({
-          'name':'informatieligplaats-alternatief',
-          'lifespan': '5'
-        });
+    
+        agent.context= new Contexts(
+          this.agent.request_.body.queryResult.outputContexts,
+          this.agent.session);
         agent.add(res[0]);
       }
     })
