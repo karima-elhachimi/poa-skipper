@@ -17,12 +17,13 @@ module.exports = class FulfillmentHelpers {
 
     createNauticalParams(...params) {
 
-        if(params === 'all') {
-            return 'airTemperature,windSpeed,windDirection,visibility,swellHeight';
-        }
-        let paramString;
-        for (let i = 0; i < params; i++) {
-            paramString += `, ${params[i]}`
+        let paramString = '';
+        if(params[0] === 'all') {
+           paramString= 'airTemperature,windSpeed,windDirection,visibility,swellHeight';
+        } else {
+            for (let i = 0; i < params.length; i++) {
+                paramString += `${params[i]},`
+            }
         }
 
         return paramString;
