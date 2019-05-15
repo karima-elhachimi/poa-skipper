@@ -16,12 +16,16 @@ module.exports = class FulfillmentHelpers {
      }
 
      createNauticalParams(...params) {
+
+        if(params === 'all') {
+            return 'airTemperature,windSpeed,windDirection,visibility,swellHeight';
+        }
         let paramString;
         for (let i = 0; i < params; i++) {
             paramString += `, ${params[i]}`
         }
 
-        return params;
+        return paramString;
     }
 
     getFullUrl(path, host) {
@@ -66,18 +70,7 @@ module.exports = class FulfillmentHelpers {
     createNauticalSearchPath(lat, lon, params) {
         return `/point?lat=${lat}&lng=${lon}&source=sg&params=${params}`
     }
-    createNauticalParams(...params) {
-
-        if(params === 'all') {
-            return 'airTemperature,windSpeed,windDirection,visibility,swellHeight';
-        }
-        let paramString;
-        for (let i = 0; i < params; i++) {
-            paramString += `, ${params[i]}`
-        }
-
-        return params;
-    }
+   
 
     requestAvailableQuays(location){
         let url = this.getFullUrl(this.createQuaysPath(location), this.apicsHost);
@@ -91,7 +84,10 @@ module.exports = class FulfillmentHelpers {
 
     requestQuayInformationById(quaynumber) {
         let url = this.getFullUrl(this.createQuayPath(quaynumber), this.apicsHost);
-        return axios.get(url)      
+        return axios.get(url).then(res => {
+            console.log(`requestQuayInfo data response: ${res}`);
+            return this.formatQuayInfo(res);
+        })     
     }
 
     requestLockExecutionDetail(executionId){
@@ -212,6 +208,15 @@ module.exports = class FulfillmentHelpers {
 
     }
 
+    formatQuayInfo(rawQuay){
+        let quay = JSON.parse(rawQuay);
+        let response = `Kaainummer ${quay.quayNumber} ` 
+        if(quay.status == 'available') {
+            response += `is beschikbaar van ${moment(quay.availableFrom).format('L, LTS')} tot ${moment(quay.availableTill)}`
+            
+        }
+        return `Kaainummer: ${quay.quayNumber} is `
+    }
     formatAvailableQuay(rawQuayData) {
         let response = '';
         rawQuayData.forEach(quay => {

@@ -137,8 +137,9 @@ app.post('/fulfillment', express.json(), (request, response) => {
   function respondWithAvailableQuays(agent) {
     const location = agent.parameters.paramDok? agent.parameters.paramDok : null;
     console.log(`responding with quays nearest to: ${location}`);
+    
     return fulfill.requestAvailableQuays(location)
-    .then(res => {
+    .then(res => {  
       console.log(`#respondWithAvailableQuay: ${res}`);
       agent.add(`Volgende kaainummers zijn beschikbaar: \n\n ${res}`);
     })
