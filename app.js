@@ -132,10 +132,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
       if(res[1]) {
         agent.add(res[0]);
       } else {
-    
-        agent.context= new Contexts(
-          this.agent.request_.body.queryResult.outputContexts,
-          this.agent.session);
+        agent.context.set('another context name', 5, {param: 'value'})
         agent.add(res[0]);
       }
     })
