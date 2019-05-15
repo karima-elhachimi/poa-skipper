@@ -132,7 +132,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
       if(res[1]) {
         agent.add(res[0]);
       } else {
-        agent.context.set('another context name', 5, {param: 'value'})
+        agent.context.set('informatieligplaats-alternatief', 5, {param: ''})
         agent.add(res[0]);
       }
     })
