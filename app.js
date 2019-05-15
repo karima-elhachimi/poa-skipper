@@ -111,7 +111,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
     return fulfill.requestAllLocks()
       .then(locks => {
         console.log(`request all locks response: ${locks}`);
-        let text = formatLocks(locks);
+        let text = fulfill.formatLocks(locks);
         agent.add(`Alle sluizen in Antwerpen en hun statussen:\n ${text}`);
       }, er => console.log(er)).catch(err => agent.add(`Er is iets misgegaan bij het ophalen van de sluizen. error: ${err}`));
   }

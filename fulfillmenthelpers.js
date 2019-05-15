@@ -13,9 +13,9 @@ module.exports = class FulfillmentHelpers {
         this.geoHost =  process.env.geo_host; 
         this.apicsHost =  process.env.apics_mock_host; 
         console.log(`helper initiated with: ${this.weatherHost} ${this.weatherApiKey}`);
-     }
+    }
 
-     createNauticalParams(...params) {
+    createNauticalParams(...params) {
 
         if(params === 'all') {
             return 'airTemperature,windSpeed,windDirection,visibility,swellHeight';
