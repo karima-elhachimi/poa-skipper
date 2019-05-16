@@ -186,27 +186,35 @@ module.exports = class FulfillmentHelpers {
 
     
     formatWeatherForecast(forecastData) {
-        let temp = forecastData.airTemperature[0].value;
-        let wk = forecastData.windSpeed[0].value;
-        let wd = forecastData.windDirection[0].value;
-        let vis = forecastData.visibility[0].value;
-        let water = forecastData.swellHeight[0].value;
-        let text = `De temperatuur is ${temp} °C
-                    en de windkracht is ${wk} m/s en komt uit ${wd}. De zichtbaarheid is ${vis}% en het water komt tot ${water} m hoog.`;
+        let temp = this.formatTemperatureForecast(forecastData);
+        let wk = this.formatWindForecast(forecastData);
+        let wd = this.formatWindDirectionForecast(forecastData);
+        let vis = this.formatVisibilityForecast(forecastData);
+        let water = this.formatWaterForecast(forecastData);
+        let text = `De temperatuur is ${temp}
+                    en de windkracht is ${wk} en komt uit ${wd}. De zichtbaarheid is ${vis} en het water komt tot ${water} hoog.`;
         console.log(`#formatWeatherForecast: ${text}`);
         return text;
     }
 
-    formatWaterForecast(forecastData){
+    formatTemperatureForecast(forecastData) {
+        return `${forecastData.airTemperature[0].value}°C`;
+    }
 
+    formatWaterForecast(forecastData){
+        return `${forecastData.swellHeight[0].value}m`;
     }
 
     formatVisibilityForecast(forecastData){
-
+        return `${forecastData.visibility[0].value}%`;
     }
 
     formatWindForecast(forecastData){
+        return `${forecastData.windSpeed[0].value}m/s`;
+    }
 
+    formatWindDirectionForecast(forecastData){
+        return forecastData.windDirection[0].value;
     }
 
     formatQuayInfo(quay){
