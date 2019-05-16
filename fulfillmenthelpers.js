@@ -214,7 +214,40 @@ module.exports = class FulfillmentHelpers {
     }
 
     formatWindDirectionForecast(forecastData){
-        return forecastData.windDirection[0].value;
+        let wd =  forecastData.windDirection[0].value;
+        return this.degreesToWindDirectionConverter(wd);
+    }
+
+
+    degreesToWindDirectionConverter(wd) {
+        const interval = 22.5;
+        const n = `N`;
+        const ne = `NO`;
+        const e = `O`;
+        const se = `ZO`;
+        const s = `Z`;
+        const sw = `ZW`;
+        const w = `W`;
+        const nw = `NW`;
+
+
+        if( wd < interval && wd > (360 - interval) ){
+            return n;
+        } else if (wd > interval && wd < (90 - interval)) {
+            return ne;
+        } else if ( wd > (90 - interval) && wd < (90 + interval)) {
+            return e;
+        } else if (wd > (90 + interval) && wd < (180 - interval)) {
+            return se;
+        } else if (wd > (180 - interval) && wd < ( 180+ interval)) {
+            return s;
+        } else if (wd > (180 + interval) && wd < (360 - interval)) {
+            return sw;
+        } else if (wd > (360 - interval) && wd < (360 + interval)) {
+            return w;
+        } else {
+            return nw;
+        }
     }
 
     formatQuayInfo(quay){
