@@ -191,8 +191,8 @@ module.exports = class FulfillmentHelpers {
         let wd = forecastData.windDirection[0].value;
         let vis = forecastData.visibility[0].value;
         let water = forecastData.swellHeight[0].value;
-        let text = `temperatuur: ${temp} graden celcius
-                    windkracht: ${wk} meter per seconde.`;
+        let text = `De temperatuur is ${temp} °C
+                    en de windkracht is ${wk} m/s en komt uit ${wd}. De zichtbaarheid is ${vis}% en het water komt tot ${water} m hoog.`;
         console.log(`#formatWeatherForecast: ${text}`);
         return text;
     }
