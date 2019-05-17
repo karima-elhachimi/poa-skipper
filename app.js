@@ -1,7 +1,4 @@
 'use strict'
-
-
-
 const express = require('express');
 const cors = require('cors');
 const app = express()
@@ -31,20 +28,30 @@ admin.initializeApp()
 const df = require('./dialogflow');
 const dfAgent = new df();
 
-
-
+//nautical helper
+const Nautical = require('./nauticalFulfillment');
+const nautical = new Nautical();
 
 //todo: implement initial hello
-app.get('+/chat/hello')
+app.get('/chat/hello', (req, res) => {
+  dfAgent.sendTextMessageToDialogFlow('hello', 'localhost')
+  .then(answer => {
+    res.json(answer)
+  })
+})
 
-app.get('/weather/forecast/:params', (req, res) => {
-
+app.get('/weather/forecast/:location', (req, res) => {
+  nautical.respondWithNauticalDataBasedOnParams(req.params.text, 'all')
+  .then(weatherData => {
+    res.json(weatherData)
+  });
 });
 
 app.get('/chat/:text', (req, res) =>{
   dfAgent.sendTextMessageToDialogFlow(req.params.text, "localhost")
-    .then(answer => {
-      console.log(answer);
+    .then(data => {
+      console.log(data);
+      answer = dfAgent.createMessage(data);
       res.json(
          answer
       );
@@ -73,11 +80,8 @@ app.post('/fulfillment', express.json(), (request, response) => {
     let lock = agent.parameters.paramSluis;
     return fulfill.requestLockExecutions(lock)
       .then(res => {
-        console.log(`request all executions response: ${res}`);
-        // todo: format response to a readable format
-        // todo: send multiple messages
         agent.add(`request all executions response: ${res}`);
-  
+
       }).catch(er => agent.add(`Het ophalen van de schuttingen voor ${lock} is mislukt. error: ${er}`));
   }
 

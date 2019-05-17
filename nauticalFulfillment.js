@@ -1,10 +1,54 @@
+<<<<<<< HEAD
+const FulFill = require('./fulfill');
+const axios = require('axios');
+
+module.exports = class NauticalFulfillment extends FulFill {
+
+    constructor() {
+        this.geoHost = super.geoHost;
+=======
 module.exports = class NauticalFulfillment  {
 
     constructor() {
+>>>>>>> nautisch
         this.weatherHost = process.env.weather_host; 
         this.weatherApiKey = process.env.weather_api;
         console.log(`nauticalhelper initiated with: ${this.weatherHost} ${this.weatherApiKey}`);
     }
+<<<<<<< HEAD
+
+    createNauticalParams(...params) {
+
+        let paramString = '';
+        if(params[0] === 'all') {
+           paramString= 'airTemperature,windSpeed,windDirection,visibility,swellHeight';
+        } else {
+            for (let i = 0; i < params.length; i++) {
+                paramString += `${params[i]},`
+            }
+        }
+
+        return paramString;
+    }
+
+    respondWithNauticalDataBasedOnParams(city, params) {
+        console.log(`city: ${city}`)
+        return this.requestLatandLonData(city)
+            .then(latlon => {
+                let nauticalWeatherParams = this.createNauticalParams(params);
+                let path = this.createNauticalSearchPath(latlon[0], latlon[1], nauticalWeatherParams)
+                let url = this.getFullUrl(path, this.weatherHost);
+                console.log(`#respondWithNauticalWeatherdata url: ${url}`);
+                return axios.get(url, {
+                    headers: {
+                        'Authorization': this.weatherApiKey,
+                        'Content-Type': 'application/json'
+                    }
+                })
+            })
+    } 
+=======
+>>>>>>> nautisch
     
     formatWeatherForecast(forecastData) {
         let temp = this.formatTemperatureForecast(forecastData);
