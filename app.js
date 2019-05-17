@@ -29,8 +29,16 @@ const df = require('./dialogflow');
 const dfAgent = new df();
 
 //nautical helper
-const Nautical = require('./nauticalFulfillment');
-const nautical = new Nautical();
+const Nauticalfulfiller = require('./nauticalFulfillment');
+const nautical = new Nauticalfulfiller();
+
+//ligplaats helper 
+const Quayfulfiller = require('./quayFulfillment');
+const quayfulfiller = Quayfulfiller();
+
+//sluis helper
+const Lockfulfiller = require('./lockFulfillment');
+const lockfulfiller = new Lockfulfiller();
 
 //todo: implement initial hello
 app.get('/chat/hello', (req, res) => {
@@ -76,7 +84,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
       }).catch(er => agent.add(`something went wrong: ${er}`))
   }
 
-  function allExecutions(agent) {
+  function allExecutionsPerLock(agent) {
     let lock = agent.parameters.paramSluis;
     return fulfill.requestLockExecutions(lock)
       .then(res => {
@@ -102,6 +110,14 @@ app.post('/fulfillment', express.json(), (request, response) => {
         let text = fulfill.formatLocks(locks);
         agent.add(`Alle sluizen in Antwerpen en hun statussen:\n ${text}`);
       }, er => console.log(er)).catch(err => agent.add(`Er is iets misgegaan bij het ophalen van de sluizen. error: ${err}`));
+  }
+
+  function respondWithUnavailableLocks(){
+    return lockfulfiller.getOutofOrderLocks()
+    .then(res => {
+      //nl
+      agent.add(lockfulfiller.formatLocks(res));
+    })
   }
 
   function executionDetails(agent) {
@@ -145,10 +161,11 @@ app.post('/fulfillment', express.json(), (request, response) => {
   let intentMap = new Map()
  
   intentMap.set('nautisch.algemeen', nauticalForecast);
-  intentMap.set('sluis.schuttingen', allExecutions);
+  intentMap.set('sluis.schuttingen', allExecutionsPerLock);
   intentMap.set('sluis.toestand.algemeen - yes', allLocks);
   intentMap.set('sluis.toestand.detail', lockDetails )
   intentMap.set('sluis.schutting.details', executionDetails)
+  intentMap.set('sluis.toestand.buitendienst', respondWithUnavailableLocks)
   intentMap.set('informatie.ligplaats - alternatief', respondWithAvailableQuays)
   intentMap.set('informatie.ligplaats.check.ja', respondWithQuayInfo)
   intentMap.set('informatie.ligplaats - check kaainr? no', respondWithAvailableQuays)

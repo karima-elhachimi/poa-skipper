@@ -1,8 +1,10 @@
 const request = require('request');
 const URL = require('url').URL;
+const Fulfill = require('./fulfill')
 
-module.exports = class ApicsRequestHandler {
+module.exports = class ApicsRequestHandler extends Fulfill {
     constructor(){
+        super();
         this.apicsHost =  process.env.apics_mock_host; 
     }
 

@@ -181,7 +181,10 @@ module.exports = class FulfillmentHelpers {
     requestLockExecutions(lock) {
         let lockExecutionsPath = this.createGetLockExecutionsPath(lock);
         let url = this.getFullUrl(lockExecutionsPath, this.apicsHost);
-        return this.requestApicsData(url);
+        return this.requestApicsData(url)
+        .then(res => {
+            
+        })
     }
 
     
