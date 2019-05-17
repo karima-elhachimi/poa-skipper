@@ -116,7 +116,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
     return lockfulfiller.getOutofOrderLocks()
     .then(res => {
       //nl
-      agent.add(lockfulfiller.formatLocks(res));
+      agent.add(`Onbeschikbare sluizen: ${lockfulfiller.formatLocks(res)}`);
     })
   }
 
