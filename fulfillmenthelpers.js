@@ -143,7 +143,7 @@ module.exports = class FulfillmentHelpers {
     } 
    
     respondWithLockInformation(lockCode){
-        const url = this.getFullUrl(this.createGetLockExecutionsPath(lockCode), this.apicsHost);
+        const url = this.getFullUrl(this.createGetLockPath(lockCode), this.apicsHost);
         return this.requestApicsData(url).then(res => {
             return res;
         })

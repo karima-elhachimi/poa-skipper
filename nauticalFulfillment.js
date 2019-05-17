@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const FulFill = require('./fulfill');
 const axios = require('axios');
 
@@ -5,10 +6,16 @@ module.exports = class NauticalFulfillment extends FulFill {
 
     constructor() {
         this.geoHost = super.geoHost;
+=======
+module.exports = class NauticalFulfillment  {
+
+    constructor() {
+>>>>>>> nautisch
         this.weatherHost = process.env.weather_host; 
         this.weatherApiKey = process.env.weather_api;
         console.log(`nauticalhelper initiated with: ${this.weatherHost} ${this.weatherApiKey}`);
     }
+<<<<<<< HEAD
 
     createNauticalParams(...params) {
 
@@ -40,6 +47,8 @@ module.exports = class NauticalFulfillment extends FulFill {
                 })
             })
     } 
+=======
+>>>>>>> nautisch
     
     formatWeatherForecast(forecastData) {
         let temp = this.formatTemperatureForecast(forecastData);

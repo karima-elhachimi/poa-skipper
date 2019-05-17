@@ -1,7 +1,7 @@
 'use strict'
 
 const dialogflow = require('dialogflow');
-const dotenv = require('dotenv').config()
+const dotenv = require('dotenv').config();
 const Chatmessage = require('./models/Chatmessage');
 
 module.exports = class DialogFlow {
@@ -21,6 +21,9 @@ module.exports = class DialogFlow {
 
     //console.log(`class DialogFlow: privateKey: ${privateKey}`);
   }
+
+
+  //todo: trigger initial hello with payload options: https://dialogflow.com/docs/intents/rich-messages#custom_payload
 
   async sendTextMessageToDialogFlow(textMessage, sessionId) {
     // session path -> waarvoor dient dit?
