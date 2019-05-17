@@ -34,7 +34,7 @@ const nautical = new Nauticalfulfiller();
 
 //ligplaats helper 
 const Quayfulfiller = require('./quayFulfillment');
-const quayfulfiller = Quayfulfiller();
+const quayfulfiller = new Quayfulfiller();
 
 //sluis helper
 const Lockfulfiller = require('./lockFulfillment');
