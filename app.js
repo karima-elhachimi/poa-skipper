@@ -108,8 +108,8 @@ app.post('/fulfillment', express.json(), (request, response) => {
   }
 
   function lockDetails(agent){
-    let lockName = agent.parameters.paramSluis.toLowerCase();
-    console.log(`lock details ${lockCodeMap.get(lockName)}`);
+    let lockName = agent.parameters.paramSluis;
+    console.log(`lock details ${lockName}`);
     agent.add(`Ik vraag de details op voor de ${lockName}`);
   }
 
