@@ -86,10 +86,9 @@ app.post('/fulfillment', express.json(), (request, response) => {
 
   function allExecutionsPerLock(agent) {
     let lock = agent.parameters.paramSluis;
-    return fulfill.requestLockExecutions(lock)
+    return lockfulfiller.requestLockExecutions(lock)
       .then(res => {
-        agent.add(`request all executions response: ${res}`);
-
+        agent.add(`Alle schuttingen voor ${lock}: ${res}`);
       }).catch(er => agent.add(`Het ophalen van de schuttingen voor ${lock} is mislukt. error: ${er}`));
   }
 
@@ -127,8 +126,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
 
   function executionDetails(agent) {
     let lock = agent.parameters.paramSluis;
-
-    return fulfill.requestLockExecutionDetail(lock).then(res => {
+    return lockfulfiller.requestLockExecutionDetail(lock).then(res => {
       agent.add(`Details voor de eerstvolgende schutting van ${lock}: ${res[0]}`)
     })
   }

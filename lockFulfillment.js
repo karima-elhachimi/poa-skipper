@@ -22,8 +22,7 @@ module.exports = class LockFulfillment extends ApicsRequest  {
     createGetLockExecutionsPath(lockCode) {
         return `/apics/lockexecutions/${lockCode}`;
     }    
-
-    
+  
     requestLockExecutionDetail(executionId){
         let url = this.getFullUrl(this.createGetLockExecutionPath(executionId, this.apicsHost));
         return this.requestApicsData(url);
@@ -61,34 +60,28 @@ module.exports = class LockFulfillment extends ApicsRequest  {
         let url = this.getFullUrl(lockExecutionsPath, this.apicsHost);
         return this.requestApicsData(url)
         .then(res => {
-            
+            return this.formatLockExecutions(JSON.parse(res));
         })
     }
 
+    //dry argh
     formatLocks(locks) {
         let format = '';
-
-        locks = JSON.parse(locks);
         for (let i = 0; i < locks.length; i++) {
             format += `${locks[i].lockName} status: ${locks[i].status}\n`;
-
         }
         console.log(format);
-
         return format;
     }
 
-    formatLockExecutions(lockexecutions){
+    formatLockExecutions(executions){
         let format = '';
-
-        const executions = JSON.parse(lockexecutions);
         executions.forEach(execution => {
             format +=   `richting: ${execution.direction},
                         geplande start: ${moment(execution.planned)}
                         `;
 
         })
-
         return format;
     }
 
