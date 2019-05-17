@@ -37,13 +37,13 @@ module.exports = class LockFulfillment extends ApicsRequest  {
     }
 
     getOutofOrderLocks(){
-        this.requestAllLocks()
+        return this.requestAllLocks()
         .then(res => {
             const locks = JSON.parse(res);
             let locksOutOfOrder = [];
             locks.forEach(lock => {
                 if(lock.status.toLowerCase() == 'unavailable' )
-                    locksOutOfOrder.add(lock);
+                    locksOutOfOrder.push(lock);
             })
             return locksOutOfOrder;
         })
