@@ -85,8 +85,11 @@ module.exports = class LockFulfillment extends ApicsRequest  {
         executions.forEach(execution => {
             format +=   `richting: ${execution.direction},
                         geplande start: ${moment(execution.planned)}
+                        `;
 
         })
+
+        return format;
     }
 
 
