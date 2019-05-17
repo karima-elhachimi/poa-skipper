@@ -1,7 +1,4 @@
 'use strict'
-
-
-
 const express = require('express');
 const http = require('http');
 const https = require('https');
@@ -14,9 +11,11 @@ const app = express()
 app.use(cors());
 
 // dialogflow
-const functions = require('firebase-functions')
 const { WebhookClient } = require('dialogflow-fulfillment')
-const { Card, Suggestion } = require('dialogflow-fulfillment')
+//dialogflow fulfillment helper
+const fulfillmentHelper = require('./fulfillmenthelpers')
+
+const fulfill = new fulfillmentHelper();
 const admin = require('firebase-admin')
 process.env.DEBUG = 'dialogflow:debug' // enables lib debugging statements
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -26,14 +25,9 @@ admin.initializeApp()
 const df = require('./dialogflow');
 const dfAgent = new df();
 
-// api
-const stormglassHost = 'http://api.stormglass.io'
-const nomiHost = 'http://nominatim.openstreetmap.org';
-//mock api voor apics
-const apicsHost = 'http://localhost:1880';
-//api keys
-const stormGlassApi = '38116ef6-44b8-11e9-8f0d-0242ac130004-38117022-44b8-11e9-8f0d-0242ac130004'
-
+//nautical helper
+const Nautical = require('./nauticalFulfillment');
+const nautical = new Nautical();
 //lockCode keys
 let lcArray = [
   ["berendrechtsluis", "BES"],
@@ -45,19 +39,27 @@ let lcArray = [
 ];
 const lockCodeMap = new Map(lcArray);
 
+//todo: implement initial hello
+app.get('/chat/hello', (req, res) => {
+  dfAgent.sendTextMessageToDialogFlow('hello', 'localhost')
+  .then(answer => {
+    res.json(answer)
+  })
+})
 
-
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
+app.get('/weather/forecast/:location', (req, res) => {
+  nautical.respondWithNauticalDataBasedOnParams(req.params.text, 'all')
+  .then(weatherData => {
+    res.json(weatherData)
+  });
 });
 
 
 app.get('/chat/:text', (req, res) =>{
   dfAgent.sendTextMessageToDialogFlow(req.params.text, "localhost")
-    .then(answer => {
-      console.log(answer);
+    .then(data => {
+      console.log(data);
+      answer = dfAgent.createMessage(data);
       res.json(
          answer
       );
