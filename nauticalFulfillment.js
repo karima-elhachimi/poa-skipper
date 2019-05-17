@@ -4,6 +4,7 @@ const axios = require('axios');
 module.exports = class NauticalFulfillment extends FulFill {
 
     constructor() {
+        super();
         this.weatherHost = process.env.weather_host; 
         this.weatherApiKey = process.env.weather_api;
         console.log(`nauticalhelper initiated with: ${this.weatherHost} ${this.weatherApiKey}`);
