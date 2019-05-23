@@ -58,7 +58,7 @@ app.get('/weather/forecast/:location', (req, res) => {
 app.get('/chat/:text', (req, res) =>{
   dfAgent.sendTextMessageToDialogFlow(req.params.text, "localhost")
     .then(data => {
-      console.log(data.fulfillmetMessages);
+      console.log(`#sendTextMessageToDialogflow returned data: ${data}`);
       answer = dfAgent.createMessage(data);
       res.json(
          answer
