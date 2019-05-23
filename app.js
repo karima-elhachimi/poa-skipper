@@ -60,6 +60,7 @@ app.get('/chat/:text', (req, res) =>{
     .then(data => {
       console.log(`#sendTextMessageToDialogflow returned data: ${data.queryResult.queryText}`);
       answer = dfAgent.createMessage(data);
+      console.log(`answer: ${answer.toString()}`);
       res.json(
          answer
       );

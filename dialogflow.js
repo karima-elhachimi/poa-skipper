@@ -50,6 +50,8 @@ module.exports = class DialogFlow {
   }
 
   createMessage(queryres) {
+    queryres = JSON.parse(queryres);
+    console.log('parsed queryres');
     let message = new Chatmessage(queryres.intent.displayName.toString(), 'bot', queryres.fulfillmentMessages[0].text.text[0], Date.now() );
     return message;
   }
