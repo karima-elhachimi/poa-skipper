@@ -41,7 +41,7 @@ const Lockfulfiller = require('./lockFulfillment');
 const lockfulfiller = new Lockfulfiller();
 
 //todo: implement initial hello
-app.get('/chat/hello', (req, res) => {
+app.get('/chat/init', (req, res) => {
   dfAgent.sendTextMessageToDialogFlow('hello', 'localhost')
   .then(answer => {
     res.json(answer)
@@ -58,7 +58,7 @@ app.get('/weather/forecast/:location', (req, res) => {
 app.get('/chat/:text', (req, res) =>{
   dfAgent.sendTextMessageToDialogFlow(req.params.text, "localhost")
     .then(data => {
-      console.log(data);
+      console.log(data.fulfillmetMessages);
       answer = dfAgent.createMessage(data);
       res.json(
          answer
