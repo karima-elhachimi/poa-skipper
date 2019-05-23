@@ -55,18 +55,15 @@ app.get('/weather/forecast/:location', (req, res) => {
   });
 });
 
-app.get('/chat/:text', (req, res) =>{
+app.get('/chat/:text', (req, res) => {
   dfAgent.sendTextMessageToDialogFlow(req.params.text, "localhost")
-    .then(data => {
-      console.log(`#sendTextMessageToDialogflow returned data: ${data.queryResult.queryText}`);
-      answer = dfAgent.createMessage(data);
-      console.log(`answer: ${answer.toString()}`);
-      res.json(
-         answer
-      );
+    .then(queryres => {
+      console.log(`#sendTextMessageToDialogflow returned data: ${queryRes}`);
+      let message ={intent: queryres.intent.displayName.toString(), sender: 'bot', text:  queryres.fulfillmentMessages[0].text.text[0], timestamp: Date.now() };
+      res.json(message); 
     })
     .catch(err => res.send(err))
-})
+});
 
 app.get('/', (req, res) => res.send('online'))
 
