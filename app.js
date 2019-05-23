@@ -57,12 +57,13 @@ app.get('/weather/forecast/:location', (req, res) => {
 
 app.get('/chat/:text', (req, res) => {
   dfAgent.sendTextMessageToDialogFlow(req.params.text, "localhost")
-    .then(queryres => {
-      console.log(`#sendTextMessageToDialogflow returned data: ${queryRes}`);
-      let message ={intent: queryres.intent.displayName.toString(), sender: 'bot', text:  queryres.fulfillmentMessages[0].text.text[0], timestamp: Date.now() };
-      res.json(message); 
-    })
-    .catch(err => res.send(err))
+  .then(answer => {
+    console.log('get /chat/text answer: ' +answer);
+    res.json(
+       answer
+    );
+  })
+  .catch(err => res.send(err))
 });
 
 app.get('/', (req, res) => res.send('online'))
