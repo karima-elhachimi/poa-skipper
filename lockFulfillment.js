@@ -67,9 +67,9 @@ module.exports = class LockFulfillment extends ApicsRequest  {
     //dry argh
     formatLocks(locks) {
         let format = '';
-        for (let i = 0; i < locks.length; i++) {
-            format += `${locks[i].lockName} status: ${locks[i].status}\n`;
-        }
+        locks.forEach(lock => {
+            format += `${lock.lockName} status: ${lock.status.toLowerCase()}\n`;
+        })
         console.log(format);
         return format;
     }

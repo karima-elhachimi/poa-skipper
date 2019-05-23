@@ -145,7 +145,7 @@ module.exports = class FulfillmentHelpers {
     respondWithLockInformation(lockCode){
         const url = this.getFullUrl(this.createGetLockPath(lockCode), this.apicsHost);
         return this.requestApicsData(url).then(res => {
-            return res;
+            return `Status van de ${res.lockName} is ${res.status}.`;
         })
     }
 
