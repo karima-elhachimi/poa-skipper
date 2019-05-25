@@ -24,6 +24,23 @@ module.exports = class NauticalFulfillment extends FulFill {
         return paramString;
     }
 
+    createNauticalSearchPath(lat, lon, params) {
+        return `/point?lat=${lat}&lng=${lon}&source=sg&params=${params}`
+    }
+
+    createTidesParams(position){
+        return `/v1/tide/extremes/point?lat=${position[0]}&lng=${position[1]}`;
+
+    }
+
+    requestTidalData(position){
+        const url = this.getFullUrl(this.createTidesParams(position), this.weatherHost);
+        return this.requestNauticalData(url).then(res => {
+            console.log(`tidal data: ${res.extremas[0]}`);
+            return res.extremas[0];
+        })
+
+    }
     respondWithNauticalDataBasedOnParams(city, params) {
         console.log(`city: ${city}`)
         return this.requestLatandLonData(city)
@@ -32,15 +49,20 @@ module.exports = class NauticalFulfillment extends FulFill {
                 let path = this.createNauticalSearchPath(latlon[0], latlon[1], nauticalWeatherParams)
                 let url = this.getFullUrl(path, this.weatherHost);
                 console.log(`#respondWithNauticalWeatherdata url: ${url}`);
-                return axios.get(url, {
-                    headers: {
-                        'Authorization': this.weatherApiKey,
-                        'Content-Type': 'application/json'
-                    }
-                })
+                return this.requestNauticalData(url);
             })
     } 
+
     
+    requestNauticalData(url) {
+        return axios.get(url, {
+            headers: {
+                'Authorization': this.weatherApiKey,
+                'Content-Type': 'application/json'
+            }
+        });
+    }
+
     formatWeatherForecast(forecastData) {
         let temp = this.formatTemperatureForecast(forecastData);
         let wk = this.formatWindForecast(forecastData);

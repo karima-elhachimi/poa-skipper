@@ -48,7 +48,14 @@ app.get('/chat/init', (req, res) => {
   })
 })
 
-app.get('/weather/forecast/:location', (req, res) => {
+app.get('/forecast/location/:location', (req, res) => {
+  nautical.respondWithNauticalDataBasedOnParams(req.params.text, 'all')
+  .then(weatherData => {
+    res.json(weatherData)
+  });
+});
+
+app.get('/forecast/position/:position', (req, res) => {
   nautical.respondWithNauticalDataBasedOnParams(req.params.text, 'all')
   .then(weatherData => {
     res.json(weatherData)
