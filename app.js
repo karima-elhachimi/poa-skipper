@@ -76,7 +76,8 @@ app.get('/forecast/location/:location', (req, res) => {
 });
 
 app.get('/forecast/position/:position', (req, res) => {
-  nautical.respondWithNauticalWeatherForecastByPosition(req.params.text, 'all')
+  const pos = req.params.text.split(",");
+  nautical.respondWithNauticalWeatherForecastByPosition(pos, 'all')
   .then(weatherData => {
     res.json(weatherData)
   });
