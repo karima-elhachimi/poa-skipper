@@ -41,19 +41,27 @@ module.exports = class NauticalFulfillment extends FulFill {
         })
 
     }
-    respondWithNauticalDataBasedOnParams(city, params) {
+    respondWithNauticalWeatherForecastByLocation(city, params) {
         console.log(`city: ${city}`)
         return this.requestLatandLonData(city)
             .then(latlon => {
-                let nauticalWeatherParams = this.createNauticalParams(params);
-                let path = this.createNauticalSearchPath(latlon[0], latlon[1], nauticalWeatherParams)
-                let url = this.getFullUrl(path, this.weatherHost);
-                console.log(`#respondWithNauticalWeatherdata url: ${url}`);
-                return this.requestNauticalData(url);
+                this.respondWithNauticalWeatherForecastByPosition(latlon, params);
             })
     } 
+    respondWithNauticalWeatherForecastByPosition(position, params) {
+        console.log(`getting weather forecast for position: ${position}`);
+        const pathParams = this.createNauticalParams(params);
+        const path = this.createNauticalParams(pathParams);
+        return this.requestWeatherForecast(path);
+    }
 
     
+    requestWeatherForecast(path) {
+        const url = this.getFullUrl(path, this.weatherHost);
+        console.log(`#respondWithNauticalWeatherdata url: ${url}`);
+        return this.requestNauticalData(url);
+    }
+
     requestNauticalData(url) {
         return axios.get(url, {
             headers: {
@@ -64,13 +72,11 @@ module.exports = class NauticalFulfillment extends FulFill {
     }
 
     formatWeatherForecast(forecastData) {
-        let temp = this.formatTemperatureForecast(forecastData);
         let wk = this.formatWindForecast(forecastData);
         let wd = this.formatWindDirectionForecast(forecastData);
         let vis = this.formatVisibilityForecast(forecastData);
         let water = this.formatWaterForecast(forecastData);
-        let text = `De temperatuur is ${temp}
-                    en de windkracht is ${wk} en komt uit ${wd}. De zichtbaarheid is ${vis} en het water komt tot ${water} hoog.`;
+        let text = `De windkracht is ${wk} en komt uit het ${wd}. De zichtbaarheid is ${vis} en het water komt tot ${water} hoog.`;
         console.log(`#formatWeatherForecast: ${text}`);
         return text;
     }

@@ -48,15 +48,34 @@ app.get('/chat/init', (req, res) => {
   })
 })
 
+app.get('/tides/location/:location', (req, res) => {
+//todo: raar, refactor!
+  nautical.requestLatandLonData(req.params.text)
+  .then(position => {
+    nautical.requestTidalData(position)
+    .then(tidal => {
+      res.json(tidal);
+    });
+  });
+})
+
+app.get('/tides/position/:position', (req, res) => {
+  nautical.requestTidalData(req.params.text)
+  .then(tidal => {
+    res.json(tidal);
+  })
+})
+
+
 app.get('/forecast/location/:location', (req, res) => {
-  nautical.respondWithNauticalDataBasedOnParams(req.params.text, 'all')
+  nautical.respondWithNauticalWeatherForecastByLocation(req.params.text, 'all')
   .then(weatherData => {
     res.json(weatherData)
   });
 });
 
 app.get('/forecast/position/:position', (req, res) => {
-  nautical.respondWithNauticalDataBasedOnParams(req.params.text, 'all')
+  nautical.respondWithNauticalWeatherForecastByPosition(req.params.text, 'all')
   .then(weatherData => {
     res.json(weatherData)
   });
