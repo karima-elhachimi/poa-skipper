@@ -60,7 +60,8 @@ app.get('/tides/location/:location', (req, res) => {
 })
 
 app.get('/tides/position/:position', (req, res) => {
-  nautical.requestTidalData(req.params.text)
+  const pos = req.params.text.split(",");
+  nautical.requestTidalData(pos)
   .then(tidal => {
     res.json(tidal);
   })
