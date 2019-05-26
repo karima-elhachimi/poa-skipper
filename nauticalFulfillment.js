@@ -25,7 +25,7 @@ module.exports = class NauticalFulfillment extends FulFill {
     }
 
     createNauticalSearchPath(lat, lon, params) {
-        return `/point?lat=${lat}&lng=${lon}&source=sg&params=${params}`
+        return `v1/weather/point?lat=${lat}&lng=${lon}&source=sg&params=${params}`
     }
 
     createTidesParams(position){
@@ -51,7 +51,7 @@ module.exports = class NauticalFulfillment extends FulFill {
     respondWithNauticalWeatherForecastByPosition(position, params) {
         console.log(`getting weather forecast for position: ${position}`);
         const pathParams = this.createNauticalParams(params);
-        const path = this.createNauticalParams(pathParams);
+        const path = this.createNauticalSearchPath(position[0], position[1], pathParams);
         return this.requestWeatherForecast(path);
     }
 
@@ -68,6 +68,10 @@ module.exports = class NauticalFulfillment extends FulFill {
                 'Authorization': this.weatherApiKey,
                 'Content-Type': 'application/json'
             }
+        })
+        .catch(e => {
+            console.log(`getting nauticaldata failed, error: ${e}`);
+            return e;
         });
     }
 

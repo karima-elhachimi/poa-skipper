@@ -25,7 +25,11 @@ module.exports = class Fulfill {
             .then(res => {
                 console.log(`lat lon response: ${JSON.parse(res.data[0].lat)}`);
                 return [JSON.parse(res.data[0].lat), JSON.parse(res.data[0].lon)];
-            });
+            })
+            .catch(e => {
+                console.log(`getting lat and lon data failed, error: ${e}`);
+                return e;
+            })
     }
 
     
