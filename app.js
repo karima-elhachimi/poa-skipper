@@ -83,13 +83,14 @@ app.get('/forecast/location/:location', (req, res) => {
 app.get('/forecast/position/:position', (req, res) => {
   console.log(`req text: ${req.params.position}`);
   const pos = req.params.position.split(",");
-  {
-    
+  try { 
     nautical.respondWithNauticalWeatherForecastByPosition(pos, 'all')
       .then(weatherData => {
         console.log(`returned weatherData: ${weatherData}`);
         res.send(weatherData);
       });
+  } catch (err) {
+    console.log(`get forecast by position error: ${err}`);
   }
 });
 
