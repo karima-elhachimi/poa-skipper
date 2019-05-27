@@ -81,9 +81,23 @@ app.get('/forecast/location/:location', (req, res) => {
     nautical.respondWithNauticalWeatherForecastByLocation(req.params.location, 'all')
       .then(weatherData => {
         console.log(`returned weatherData: ${weatherData}`);
+        //res.send(weatherData)
+        res.json({
+          visibility: "NA",
+          windForce: "NA",
+          windDirection: "NA",
+          waterLevel: "NA"
+        });
       });
   } catch (err) {
     console.log(`get location went wrong error: ${err}`);
+    res.json({
+      visibility: "NA",
+      windForce: "NA",
+      windDirection: "NA",
+      waterLevel: "NA"
+    });
+    
 
   }
 });
@@ -95,7 +109,13 @@ app.get('/forecast/position/:position', (req, res) => {
     nautical.respondWithNauticalWeatherForecastByPosition(pos, 'all')
       .then(weatherData => {
         console.log(`returned weatherData: ${weatherData}`);
-        res.send(weatherData);
+        //res.send(weatherData);
+        res.json({
+          visibility: "NA",
+          windForce: "NA",
+          windDirection: "NA",
+          waterLevel: "NA"
+        });
       });
   } catch (err) {
     console.log(`get forecast by position error: ${err}`);
