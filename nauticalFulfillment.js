@@ -1,5 +1,6 @@
 const FulFill = require('./fulfill');
 const axios = require('axios');
+const Forecast = require('./models/Forecast');
 
 module.exports = class NauticalFulfillment extends FulFill {
 
@@ -54,7 +55,7 @@ module.exports = class NauticalFulfillment extends FulFill {
         const path = this.createNauticalSearchPath(position[0], position[1], pathParams);
         return this.requestWeatherForecast(path)
         .then(forecast => {
-            console.log(`raw forecast: ${forecast}`);
+            console.log(`raw forecast: ${JSON.parse(forecast)}`);
             return forecast;
 
         })
@@ -68,12 +69,12 @@ module.exports = class NauticalFulfillment extends FulFill {
     }
 
     createForecastResponse(forecast) {
-        return {
-            visibility: this.formatVisibilityForecast(forecast),
-            windForce: this.formatWindForecast(forecast),
-            windDirection: this.formatWindDirectionForecast(forecast),
-            waterLevel: this.formatWaterForecast(forecast)
-        };
+        return new Forecast(
+            this.formatVisibilityForecast(forecast), 
+            this.formatWindForecast(forecast),
+            this.formatWindDirectionForecast(forecast), 
+            this.formatWaterForecast(forecast));
+      
     }
 
     requestNauticalData(url) {
