@@ -80,7 +80,7 @@ app.get('/forecast/position/:position', (req, res) => {
   const pos = req.params.position.split(",");
   nautical.respondWithNauticalWeatherForecastByPosition(pos, 'all')
   .then(weatherData => {
-    res.send(weatherData)
+    res.json(JSON.parse(weatherData))
   });
 });
 
