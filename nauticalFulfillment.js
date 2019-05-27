@@ -37,8 +37,8 @@ module.exports = class NauticalFulfillment extends FulFill {
     requestTidalData(position){
         const url = this.getFullUrl(this.createTidesParams(position), this.weatherHost);
         return this.requestNauticalData(url).then(res => {
-            console.log(`tidal data: ${res.extremas.toString()}`);
-            return res.extremas[0];
+            console.log(`tidal data: ${res}`);
+            return res;
         })
 
     }

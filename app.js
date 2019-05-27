@@ -50,21 +50,29 @@ app.get('/chat/init', (req, res) => {
 
 app.get('/tides/location/:location', (req, res) => {
   //todo: raar, refactor!
-  nautical.requestLatandLonData(req.params.location)
+  try {
+    nautical.requestLatandLonData(req.params.location)
     .then(position => {
       nautical.requestTidalData(position)
         .then(tidal => {
           res.json(tidal);
         });
     });
+  }catch (err) {
+    console.log(`tides by location error: ${err}`);
+  }
 })
 
 app.get('/tides/position/:position', (req, res) => {
   const pos = req.params.position.split(",");
-  nautical.requestTidalData(pos)
-    .then(tidal => {
-      res.json(tidal);
-    })
+  try {
+    nautical.requestTidalData(pos)
+      .then(tidal => {
+        res.json(tidal.extremas);
+      })
+  } catch (err) {
+    console.log(`getting tidal data error: ${err}`);
+  }
 })
 
 
@@ -83,7 +91,7 @@ app.get('/forecast/location/:location', (req, res) => {
 app.get('/forecast/position/:position', (req, res) => {
   console.log(`req text: ${req.params.position}`);
   const pos = req.params.position.split(",");
-  try { 
+  try {
     nautical.respondWithNauticalWeatherForecastByPosition(pos, 'all')
       .then(weatherData => {
         console.log(`returned weatherData: ${weatherData}`);
