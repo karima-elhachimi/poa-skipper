@@ -54,8 +54,8 @@ app.get('/tides/location/:location', (req, res) => {
     nautical.requestLatandLonData(req.params.location)
     .then(position => {
       nautical.requestTidalData(position)
-        .then(tidal => {
-          res.json(tidal);
+        .then(tide => {
+          res.send(tide);
         });
     });
   }catch (err) {
@@ -67,9 +67,9 @@ app.get('/tides/position/:position', (req, res) => {
   const pos = req.params.position.split(",");
   try {
     nautical.requestTidalData(pos)
-      .then(tidal => {
-        res.json(tidal.extremas);
-      })
+    .then(tide => {
+      res.send(tide);
+    });
   } catch (err) {
     console.log(`getting tidal data error: ${err}`);
   }
