@@ -4,7 +4,7 @@ const cors = require('cors');
 const app = express()
 
 app.use(cors());
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", '*');
   //res.header("Access-Control-Allow-Credentials", true);
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
@@ -43,56 +43,65 @@ const lockfulfiller = new Lockfulfiller();
 //todo: implement initial hello
 app.get('/chat/init', (req, res) => {
   dfAgent.sendTextMessageToDialogFlow('hello', 'localhost')
-  .then(answer => {
-    res.json(answer)
-  })
+    .then(answer => {
+      res.json(answer)
+    })
 })
 
 app.get('/tides/location/:location', (req, res) => {
-//todo: raar, refactor!
+  //todo: raar, refactor!
   nautical.requestLatandLonData(req.params.location)
-  .then(position => {
-    nautical.requestTidalData(position)
-    .then(tidal => {
-      res.json(tidal);
+    .then(position => {
+      nautical.requestTidalData(position)
+        .then(tidal => {
+          res.json(tidal);
+        });
     });
-  });
 })
 
 app.get('/tides/position/:position', (req, res) => {
   const pos = req.params.position.split(",");
   nautical.requestTidalData(pos)
-  .then(tidal => {
-    res.json(tidal);
-  })
+    .then(tidal => {
+      res.json(tidal);
+    })
 })
 
 
 app.get('/forecast/location/:location', (req, res) => {
-  nautical.respondWithNauticalWeatherForecastByLocation(req.params.location, 'all')
-  .then(weatherData => {
-    res.json(weatherData)
-  });
+  try {
+    nautical.respondWithNauticalWeatherForecastByLocation(req.params.location, 'all')
+      .then(weatherData => {
+        console.log(`returned weatherData: ${weatherData}`);
+      });
+  } catch (err) {
+    console.log(`get location went wrong error: ${err}`);
+
+  }
 });
 
 app.get('/forecast/position/:position', (req, res) => {
   console.log(`req text: ${req.params.position}`);
   const pos = req.params.position.split(",");
-  nautical.respondWithNauticalWeatherForecastByPosition(pos, 'all')
-  .then(weatherData => {
-    res.json(JSON.parse(weatherData))
-  });
+  {
+    
+    nautical.respondWithNauticalWeatherForecastByPosition(pos, 'all')
+      .then(weatherData => {
+        console.log(`returned weatherData: ${weatherData}`);
+        res.send(weatherData);
+      });
+  }
 });
 
 app.get('/chat/:text', (req, res) => {
   dfAgent.sendTextMessageToDialogFlow(req.params.text, "localhost")
-  .then(answer => {
-    console.log('get /chat/text answer: ' +answer);
-    res.json(
-       answer
-    );
-  })
-  .catch(err => res.send(err))
+    .then(answer => {
+      console.log('get /chat/text answer: ' + answer);
+      res.json(
+        answer
+      );
+    })
+    .catch(err => res.send(err))
 });
 
 app.get('/', (req, res) => res.send('online'))
@@ -101,8 +110,8 @@ app.get('/', (req, res) => res.send('online'))
 
 app.post('/fulfillment', express.json(), (request, response) => {
   let agent = new WebhookClient({ request: request, response: response });
-  
-  function nauticalForecast (agent) {
+
+  function nauticalForecast(agent) {
     return fulfill.respondWithNauticalWeatherData(agent)
       .then(nautischeData => {
         console.log(`json parse data: ${JSON.stringify(nautischeData.data.hours[0])}`)
@@ -120,7 +129,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
       }).catch(er => agent.add(`Het ophalen van de schuttingen voor ${lock} is mislukt. error: ${er}`));
   }
 
-  function lockDetails(agent){
+  function lockDetails(agent) {
     let lockName = agent.parameters.paramSluis;
     console.log(`lock details ${lockName}`);
     return fulfill.respondWithLockInformation(lockName).then(res => {
@@ -139,17 +148,17 @@ app.post('/fulfillment', express.json(), (request, response) => {
       }, er => console.log(er)).catch(err => agent.add(`Er is iets misgegaan bij het ophalen van de sluizen. error: ${err}`));
   }
 
-  function respondWithUnavailableLocks(){
+  function respondWithUnavailableLocks() {
     return lockfulfiller.getOutofOrderLocks()
-    .then(res => {
-      //nl
-      if(res.length > 0) {
-        agent.add(`Onbeschikbare sluizen: ${lockfulfiller.formatLocks(res)}`);
-      } else {
-        agent.add('All sluizen zijn beschikbaar');
-      }
-      
-    })
+      .then(res => {
+        //nl
+        if (res.length > 0) {
+          agent.add(`Onbeschikbare sluizen: ${lockfulfiller.formatLocks(res)}`);
+        } else {
+          agent.add('All sluizen zijn beschikbaar');
+        }
+
+      })
   }
 
   function executionDetails(agent) {
@@ -162,27 +171,27 @@ app.post('/fulfillment', express.json(), (request, response) => {
   function respondWithQuayInfo(agent) {
     let quaynr = agent.parameters.paramKaainummer;
     return fulfill.requestQuayInformationById(quaynr)
-    .then(res => {
-      console.log(`#respondWithQuayInfo response: ${res[0]}`);
-      if(res[1]) {
-        agent.add(res[0]);
-      } else {
-        agent.context.set('informatieligplaats-alternatief', 5)
-        agent.add(res[0]);
-      }
-    })
+      .then(res => {
+        console.log(`#respondWithQuayInfo response: ${res[0]}`);
+        if (res[1]) {
+          agent.add(res[0]);
+        } else {
+          agent.context.set('informatieligplaats-alternatief', 5)
+          agent.add(res[0]);
+        }
+      })
   }
 
 
   function respondWithAvailableQuays(agent) {
-    const location = agent.parameters.paramDok? agent.parameters.paramDok : null;
+    const location = agent.parameters.paramDok ? agent.parameters.paramDok : null;
     console.log(`responding with quays nearest to: ${location}`);
-    
+
     return fulfill.requestAvailableQuays(location)
-    .then(res => {  
-      console.log(`#respondWithAvailableQuay: ${res}`);
-      agent.add(`Volgende kaainummers zijn de komende 12u beschikbaar: \n\n ${res}`);
-    })
+      .then(res => {
+        console.log(`#respondWithAvailableQuay: ${res}`);
+        agent.add(`Volgende kaainummers zijn de komende 12u beschikbaar: \n\n ${res}`);
+      })
   }
 
 
@@ -190,11 +199,11 @@ app.post('/fulfillment', express.json(), (request, response) => {
 
   // Run the proper function handler based on the matched Dialogflow intent name
   let intentMap = new Map()
- 
+
   intentMap.set('nautisch.algemeen', nauticalForecast);
   intentMap.set('sluis.schuttingen', allExecutionsPerLock);
   intentMap.set('sluis.toestand.algemeen - yes', allLocks);
-  intentMap.set('sluis.toestand.detail', lockDetails )
+  intentMap.set('sluis.toestand.detail', lockDetails)
   intentMap.set('sluis.schutting.details', executionDetails)
   intentMap.set('sluis.toestand.buitendienst', respondWithUnavailableLocks)
   intentMap.set('informatie.ligplaats - alternatief', respondWithAvailableQuays)
