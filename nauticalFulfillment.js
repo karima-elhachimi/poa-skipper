@@ -37,8 +37,8 @@ module.exports = class NauticalFulfillment extends FulFill {
     requestTidalData(position){
         const url = this.getFullUrl(this.createTidesParams(position), this.weatherHost);
         return this.requestNauticalData(url).then(res => {
-            console.log(`tidal data: ${res}`);
-            return res;
+            console.log(`tidal data: ${res.data.extramas}`);
+            return res.data.extremas;
         })
 
     }
@@ -56,8 +56,8 @@ module.exports = class NauticalFulfillment extends FulFill {
         const path = this.createNauticalSearchPath(position[0], position[1], pathParams);
         return this.requestWeatherForecast(path)
         .then(forecast => {
-            console.log(`raw forecast: ${forecast.toString()}`);
-            return forecast;
+            console.log(`raw forecast: ${JSON.parse(forecast)}`);
+            return this.createForecastResponse(forecast.data.hours[0]);
         });
     }
 
