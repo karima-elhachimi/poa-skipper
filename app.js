@@ -50,7 +50,7 @@ app.get('/chat/init', (req, res) => {
 
 app.get('/tides/location/:location', (req, res) => {
 //todo: raar, refactor!
-  nautical.requestLatandLonData(req.params.text)
+  nautical.requestLatandLonData(req.params.location)
   .then(position => {
     nautical.requestTidalData(position)
     .then(tidal => {
@@ -69,15 +69,15 @@ app.get('/tides/position/:position', (req, res) => {
 
 
 app.get('/forecast/location/:location', (req, res) => {
-  nautical.respondWithNauticalWeatherForecastByLocation(req.params.text, 'all')
+  nautical.respondWithNauticalWeatherForecastByLocation(req.params.location, 'all')
   .then(weatherData => {
     res.json(weatherData)
   });
 });
 
 app.get('/forecast/position/:position', (req, res) => {
-  console.log(`req text: ${req.params.text}`);
-  const pos = JSON.parse(req.params.text).split(",");
+  console.log(`req text: ${req.params.position}`);
+  const pos = req.params.position.split(",");
   nautical.respondWithNauticalWeatherForecastByPosition(pos, 'all')
   .then(weatherData => {
     res.json(weatherData)
