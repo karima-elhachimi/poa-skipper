@@ -28,16 +28,16 @@ const dfAgent = new df();
 
 //dialogflow fulfillers for fulfillment of chat requests: 
 //nautical helper
-const Nauticalfulfiller = require('./nauticalFulfillment');
-const nautical = new Nauticalfulfiller();
+const NauticalFulfiller = require('./nauticalFulfillment');
+const nauticalFulfiller = new NauticalFulfiller();
 
 //ligplaats helper 
-const Quayfulfiller = require('./quayFulfillment');
-const quayfulfiller = new Quayfulfiller();
+const QuayFulfiller = require('./quayFulfillment');
+const quayFulfiller = new QuayFulfiller();
 
 //sluis helper
-const Lockfulfiller = require('./lockFulfillment');
-const lockfulfiller = new Lockfulfiller();
+const LockFulfiller = require('./lockFulfillment');
+const lockFulfiller = new LockFulfiller();
 
 //todo: implement initial hello
 app.get('/chat/init', (req, res) => {
@@ -80,13 +80,13 @@ app.get('/forecast/location/:location', (req, res) => {
     nautical.respondWithNauticalWeatherForecastByLocation(req.params.location, 'all')
       .then(weatherData => {
         console.log(`returned weatherData: ${weatherData}`);
-        //res.send(weatherData)
-        res.json({
+        res.send(weatherData)
+       /*  res.json({
           visibility: "NA",
           windForce: "NA",
           windDirection: "NA",
           waterLevel: "NA"
-        });
+        }); */
       });
   } catch (err) {
     console.log(`get location went wrong error: ${err}`);
@@ -140,10 +140,10 @@ app.post('/fulfillment', express.json(), (request, response) => {
   let agent = new WebhookClient({ request: request, response: response });
 
   function nauticalForecast(agent) {
-    return Nauticalfulfiller.respondWithNauticalWeatherData(agent)
+    return nauticalFulfiller.respondWithNauticalWeatherData(agent)
       .then(nautischeData => {
-        console.log(`json parse data: ${JSON.stringify(nautischeData.data.hours[0])}`)
-        let text = Nauticalfulfiller.formatWeatherForecast(nautischeData.data.hours[0]);
+        console.log(`json parse data: ${nautischeData.data.hours[0]}`)
+        let text = nauticalFulfiller.formatWeatherForecast(nautischeData.data.hours[0]);
         console.log(`response: ${text}`);
         agent.add(text);
       }).catch(er => agent.add(`something went wrong: ${er}`))
@@ -151,7 +151,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
 
   function allExecutionsPerLock(agent) {
     let lock = agent.parameters.paramSluis;
-    return lockfulfiller.requestLockExecutions(lock)
+    return lockFulfiller.requestLockExecutions(lock)
       .then(res => {
         agent.add(`Alle schuttingen voor ${lock}: ${res}`);
       }).catch(er => agent.add(`Het ophalen van de schuttingen voor ${lock} is mislukt. error: ${er}`));
@@ -160,27 +160,27 @@ app.post('/fulfillment', express.json(), (request, response) => {
   function lockDetails(agent) {
     let lockName = agent.parameters.paramSluis;
     console.log(`get lock details for ${lockName}`);
-    return lockfulfiller.respondWithLockInformation(lockName).then(res => {
+    return lockFulfiller.respondWithLockInformation(lockName).then(res => {
       agent.add(`${res.lockName} heeft een status van ${res.status}.`);
 
     })
   }
 
   function allLocks(agent) {
-    return lockfulfiller.requestAllLocks()
+    return lockFulfiller.requestAllLocks()
       .then(locks => {
         console.log(`request all locks response: ${locks}`);
-        let text = lockfulfiller.formatLocks(locks);
+        let text = lockFulfiller.formatLocks(locks);
         agent.add(`Alle sluizen in Antwerpen en hun statussen:\n ${text}`);
       }, er => console.log(er)).catch(err => agent.add(`Er is iets misgegaan bij het ophalen van de sluizen. error: ${err}`));
   }
 
   function respondWithUnavailableLocks() {
-    return lockfulfiller.getOutofOrderLocks()
+    return lockFulfiller.getOutofOrderLocks()
       .then(res => {
         //nl
         if (res.length > 0) {
-          agent.add(`Onbeschikbare sluizen: ${lockfulfiller.formatLocks(res)}`);
+          agent.add(`Onbeschikbare sluizen: ${lockFulfiller.formatLocks(res)}`);
         } else {
           agent.add('All sluizen zijn beschikbaar');
         }
@@ -190,14 +190,14 @@ app.post('/fulfillment', express.json(), (request, response) => {
 
   function executionDetails(agent) {
     let lock = agent.parameters.paramSluis;
-    return lockfulfiller.requestLockExecutionDetail(lock).then(res => {
+    return lockFulfiller.requestLockExecutionDetail(lock).then(res => {
       agent.add(`Details voor de eerstvolgende schutting van ${lock}: ${res[0]}`)
     })
   }
 
   function respondWithQuayInfo(agent) {
     let quaynr = agent.parameters.paramKaainummer;
-    return quayfulfiller.requestQuayInformationById(quaynr)
+    return quayFulfiller.requestQuayInformationById(quaynr)
       .then(res => {
         console.log(`#respondWithQuayInfo response: ${res[0]}`);
         if (res[1]) {
@@ -214,7 +214,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
     const location = agent.parameters.paramDok ? agent.parameters.paramDok : null;
     console.log(`responding with quays nearest to: ${location}`);
 
-    return quayfulfiller.requestAvailableQuays(location)
+    return quayFulfiller.requestAvailableQuays(location)
       .then(res => {
         console.log(`#respondWithAvailableQuay: ${res}`);
         agent.add(`Volgende kaainummers zijn de komende 12u beschikbaar: \n\n ${res}`);
