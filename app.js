@@ -159,10 +159,9 @@ app.post('/fulfillment', express.json(), (request, response) => {
 
   function lockDetails(agent) {
     let lockName = agent.parameters.paramSluis;
-    console.log(`lock details ${lockName}`);
+    console.log(`get lock details for ${lockName}`);
     return lockfulfiller.respondWithLockInformation(lockName).then(res => {
-
-      agent.add(`${res.lockName} heeft een status van ${status}.`);
+      agent.add(`${res.lockName} heeft een status van ${res.status}.`);
 
     })
   }
