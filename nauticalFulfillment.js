@@ -57,8 +57,8 @@ module.exports = class NauticalFulfillment extends FulFill {
                 let url = this.getFullUrl(path, this.weatherHost);
                 console.log(`#respondWithNauticalWeatherdata url: ${url}`);
                 return this.requestNauticalData(url);
-                })
             })
+    
     } 
    
     respondWithNauticalWeatherForecastByLocation(city, params) {
