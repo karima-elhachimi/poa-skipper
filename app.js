@@ -105,9 +105,9 @@ app.get('/forecast/position/:position', (req, res) => {
   console.log(`req text: ${req.params.position}`);
   const pos = req.params.position.split(",");
   try {
-    nautical.respondWithNauticalWeatherForecastByPosition(pos, 'all')
+    nauticalFulfiller.respondWithNauticalWeatherForecastByPosition(pos, 'all')
       .then(weatherData => {
-        console.log(`returned weatherData: ${weatherData}`);
+        console.log(`returned weatherData: ${nauticalFulfiller.formatWeatherForecast(weatherData)}`);
         //res.send(weatherData);
         res.json({
           visibility: "NA",
@@ -144,7 +144,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
     return nauticalFulfiller.respondWithNauticalWeatherForecastByLocation(city, 'all')
       .then(nautischeData => {
         console.log(`json parse data: ${nautischeData}`)
-        let text = nauticalFulfiller.formatWeatherForecast(nautischeData.data.hours[0]);
+        let text = nauticalFulfiller.formatWeatherForecast(nautischeData);
         console.log(`response: ${text}`);
         agent.add(text);
       }).catch(er => agent.add(`something went wrong: ${er}`))
