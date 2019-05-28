@@ -64,7 +64,7 @@ module.exports = class LockFulfillment extends ApicsRequest  {
         let url = this.getFullUrl(lockExecutionsPath, this.apicsHost);
         return this.requestApiData(url)
         .then(res => {
-            return this.formatLockExecutions(JSON.parse(res));
+            return this.formatLockExecutions(res);
         })
     }
 

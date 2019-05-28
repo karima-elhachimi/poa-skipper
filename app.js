@@ -146,15 +146,8 @@ app.post('/fulfillment', express.json(), (request, response) => {
     .then(forecast => {
       console.log(`returned forecast is ${forecast}`);
       const text = nauticalFulfiller.formatWeatherForecast(forecast.hours[0]);
-      agent.add(`Het nautisch weerbericht voor ${city} is ${text}`);
-    })
-    /* return nauticalFulfiller.respondWithNauticalWeatherForecastByLocation(city, 'all')
-      .then(nautischeData => {
-        console.log(`json parse data: ${nautischeData}`)
-        let text = nauticalFulfiller.formatWeatherForecast(nautischeData.hours[0]);
-        console.log(`response: ${text}`);
-        agent.add(text);
-      }).catch(er => agent.add(`something went wrong: ${er}`)) */
+      agent.add(`Hierbij het nautisch weerbericht voor ${city}: ${text}`);
+    });
   }
 
   function allExecutionsPerLock(agent) {
