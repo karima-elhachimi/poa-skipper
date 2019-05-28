@@ -15,8 +15,8 @@ module.exports = class ApicsRequestHandler extends Fulfill {
         return url.toString();
     }
 
-    requestApicsData(url) {
-        console.log(`apics request url: ${url}`);
+    requestApiData(url) {
+        console.log(`request url: ${url}`);
         return new Promise((resolve, reject) => {
             var options = {
                 method: 'GET',

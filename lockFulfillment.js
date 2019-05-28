@@ -26,12 +26,12 @@ module.exports = class LockFulfillment extends ApicsRequest  {
   
     requestLockExecutionDetail(executionId){
         let url = this.getFullUrl(this.createGetLockExecutionPath(executionId, this.apicsHost));
-        return this.requestApicsData(url);
+        return this.requestApiData(url);
     }
 
     respondWithLockInformation(lockCode){
         const url = this.getFullUrl(this.createGetLockPath(lockCode), this.apicsHost);
-        return this.requestApicsData(url).then(res => {
+        return this.requestApiData(url).then(res => {
             console.log(`#respondWithLockInformation response: ${res.lockName}`);
             return res;
         }, err => {
@@ -56,13 +56,13 @@ module.exports = class LockFulfillment extends ApicsRequest  {
     requestAllLocks() {
         let locksPath = this.createGetLocksPath();
         let url = this.getFullUrl(locksPath, this.apicsHost);
-        return this.requestApicsData(url);
+        return this.requestApiData(url);
     }
 
     requestLockExecutions(lock) {
         let lockExecutionsPath = this.createGetLockExecutionsPath(lock);
         let url = this.getFullUrl(lockExecutionsPath, this.apicsHost);
-        return this.requestApicsData(url)
+        return this.requestApiData(url)
         .then(res => {
             return this.formatLockExecutions(JSON.parse(res));
         })

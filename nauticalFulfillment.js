@@ -1,5 +1,5 @@
 const FulFill = require('./fulfill');
-const axios = require('axios');
+const request = require('request');
 const Forecast = require('./models/Forecast');
 
 module.exports = class NauticalFulfillment extends FulFill {
@@ -56,11 +56,7 @@ module.exports = class NauticalFulfillment extends FulFill {
                 let path = this.createNauticalSearchPath(latlon[0], latlon[1], nauticalWeatherParams)
                 let url = this.getFullUrl(path, this.weatherHost);
                 console.log(`#respondWithNauticalWeatherdata url: ${url}`);
-                return axios.get(url, {
-                    headers: {
-                        'Authorization': this.weatherApiKey,
-                        'Content-Type': 'application/json'
-                    }
+                return this.requestNauticalData(url);
                 })
             })
     } 
@@ -79,7 +75,7 @@ module.exports = class NauticalFulfillment extends FulFill {
         const path = this.createNauticalSearchPath(position[0], position[1], pathParams);
         return this.requestWeatherForecast(path)
         .then(forecast => {
-            console.log(`raw forecast: ${JSON.parse(forecast).data}`);
+            console.log(`raw forecast: ${forecast.data}`);
             //return this.createForecastResponse(forecast.data.hours[0]);
         });
     }
@@ -101,17 +97,27 @@ module.exports = class NauticalFulfillment extends FulFill {
     }
 
     requestNauticalData(url) {
-        return axios.get(url, {
-            headers: {
-                'Authorization': this.weatherApiKey,
-                'Content-Type': 'application/json',
-                'responseType': 'json'
-            }
+        console.log(`request url: ${url}`);
+        return new Promise((resolve, reject) => {
+            var options = {
+                method: 'GET',
+                url: url,
+                headers:
+                {
+                    'Authorization': this.weatherApiKey,
+                    'Content-Type': 'application/json',
+                },
+                json: true
+            };
+            request(options, function (error, response, body) {
+                if (error) {
+                    reject(error);
+                    throw new Error(error)
+                }
+                console.log(`to be resolved: ${body}`);
+                resolve(body);
+            });
         })
-        .catch(e => {
-            console.log(`getting nauticaldata failed, error: ${e}`);
-            return e;
-        });
     }
 
     formatWeatherForecast(forecastData) {

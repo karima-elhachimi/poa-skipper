@@ -20,7 +20,7 @@ module.exports = class QuayFulfillment extends ApicsRequest  {
 
     requestAvailableQuays(location){
         let url = this.getFullUrl(this.createQuaysPath(location), this.apicsHost);
-        return this.requestApicsData(url)
+        return this.requestApiData(url)
         .then(res => {
             console.log(`#requestApicsData response: ${res}`);
             return this.formatAvailableQuay(res);
@@ -30,7 +30,7 @@ module.exports = class QuayFulfillment extends ApicsRequest  {
 
     requestQuayInformationById(quaynumber) {
         let url = this.getFullUrl(this.createQuayPath(quaynumber), this.apicsHost);
-        return this.requestApicsData(url).then(res => {
+        return this.requestApiData(url).then(res => {
             console.log(`requestQuayInfo data response: ${res.quayNumber}`);
             return this.formatQuayInfo(res);
         })     
