@@ -1,4 +1,5 @@
 const ApicsRequest = require('./apicsRequestHandler');
+const moment = require('moment');
 
 module.exports = class QuayFulfillment extends ApicsRequest  {
     constructor(){
