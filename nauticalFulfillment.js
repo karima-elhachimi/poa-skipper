@@ -122,10 +122,10 @@ module.exports = class NauticalFulfillment extends FulFill {
     }
 
     formatWeatherForecast(forecastData) {
-        let wk = this.formatWindForecast(forecastData.hours[0]);
-        let wd = this.formatWindDirectionForecast(forecastData.hours[0]);
-        let vis = this.formatVisibilityForecast(forecastData.hours[0]);
-        let water = this.formatWaterForecast(forecastData.hours[0]);
+        let wk = this.formatWindForecast(forecastData);
+        let wd = this.formatWindDirectionForecast(forecastData);
+        let vis = this.formatVisibilityForecast(forecastData);
+        let water = this.formatWaterForecast(forecastData);
         let text = `De windkracht is ${wk} en komt uit het ${wd}. De zichtbaarheid is ${vis} en het water komt tot ${water} hoog.`;
         console.log(`#formatWeatherForecast: ${text}`);
         return text;
