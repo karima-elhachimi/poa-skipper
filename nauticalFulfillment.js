@@ -79,7 +79,7 @@ module.exports = class NauticalFulfillment extends FulFill {
         const path = this.createNauticalSearchPath(position[0], position[1], pathParams);
         return this.requestWeatherForecast(path)
         .then(forecast => {
-            console.log(`raw forecast: ${JSON.stringify(forecast)}`);
+            console.log(`raw forecast: ${JSON.parse(forecast).data}`);
             //return this.createForecastResponse(forecast.data.hours[0]);
         });
     }
