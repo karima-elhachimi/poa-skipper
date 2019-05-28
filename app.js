@@ -16,9 +16,7 @@ app.use(function (req, res, next) {
 
 const { WebhookClient } = require('dialogflow-fulfillment')
 const { Card, Suggestion } = require('dialogflow-fulfillment')
-//dialogflow fulfillment
-const fulfillmentHelper = require('./fulfillmenthelpers')
-const fulfill = new fulfillmentHelper();
+
 const admin = require('firebase-admin')
 process.env.DEBUG = 'dialogflow:debug' // enables lib debugging statements
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -28,6 +26,7 @@ admin.initializeApp()
 const df = require('./dialogflow');
 const dfAgent = new df();
 
+//dialogflow fulfillers for fulfillment of chat requests: 
 //nautical helper
 const Nauticalfulfiller = require('./nauticalFulfillment');
 const nautical = new Nauticalfulfiller();
@@ -141,10 +140,10 @@ app.post('/fulfillment', express.json(), (request, response) => {
   let agent = new WebhookClient({ request: request, response: response });
 
   function nauticalForecast(agent) {
-    return fulfill.respondWithNauticalWeatherData(agent)
+    return Nauticalfulfiller.respondWithNauticalWeatherData(agent)
       .then(nautischeData => {
         console.log(`json parse data: ${JSON.stringify(nautischeData.data.hours[0])}`)
-        let text = fulfill.formatWeatherForecast(nautischeData.data.hours[0]);
+        let text = Nauticalfulfiller.formatWeatherForecast(nautischeData.data.hours[0]);
         console.log(`response: ${text}`);
         agent.add(text);
       }).catch(er => agent.add(`something went wrong: ${er}`))
@@ -161,18 +160,18 @@ app.post('/fulfillment', express.json(), (request, response) => {
   function lockDetails(agent) {
     let lockName = agent.parameters.paramSluis;
     console.log(`lock details ${lockName}`);
-    return fulfill.respondWithLockInformation(lockName).then(res => {
+    return lockfulfiller.respondWithLockInformation(lockName).then(res => {
 
-      agent.add(`${res}`);
+      agent.add(`${res.lockName} heeft een status van ${status}.`);
 
     })
   }
 
   function allLocks(agent) {
-    return fulfill.requestAllLocks()
+    return lockfulfiller.requestAllLocks()
       .then(locks => {
         console.log(`request all locks response: ${locks}`);
-        let text = fulfill.formatLocks(locks);
+        let text = lockfulfiller.formatLocks(locks);
         agent.add(`Alle sluizen in Antwerpen en hun statussen:\n ${text}`);
       }, er => console.log(er)).catch(err => agent.add(`Er is iets misgegaan bij het ophalen van de sluizen. error: ${err}`));
   }
@@ -199,7 +198,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
 
   function respondWithQuayInfo(agent) {
     let quaynr = agent.parameters.paramKaainummer;
-    return fulfill.requestQuayInformationById(quaynr)
+    return quayfulfiller.requestQuayInformationById(quaynr)
       .then(res => {
         console.log(`#respondWithQuayInfo response: ${res[0]}`);
         if (res[1]) {
@@ -216,7 +215,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
     const location = agent.parameters.paramDok ? agent.parameters.paramDok : null;
     console.log(`responding with quays nearest to: ${location}`);
 
-    return fulfill.requestAvailableQuays(location)
+    return quayfulfiller.requestAvailableQuays(location)
       .then(res => {
         console.log(`#respondWithAvailableQuay: ${res}`);
         agent.add(`Volgende kaainummers zijn de komende 12u beschikbaar: \n\n ${res}`);
