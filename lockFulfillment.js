@@ -32,7 +32,7 @@ module.exports = class LockFulfillment extends ApicsRequest  {
     respondWithLockInformation(lockCode){
         const url = this.getFullUrl(this.createGetLockPath(lockCode), this.apicsHost);
         return this.requestApicsData(url).then(res => {
-            console.log(`#respondWithLockInformation response: ${JSON.parse(JSON.stringify(res.lockName))}`);
+            console.log(`#respondWithLockInformation response: ${res.lockName}`);
             return res;
         }, err => {
             console.log(`#requestApicsData error: ${err}` );

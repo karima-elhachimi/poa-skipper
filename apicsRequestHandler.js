@@ -24,7 +24,8 @@ module.exports = class ApicsRequestHandler extends Fulfill {
                 headers:
                 {
                     'Content-Type': 'application/json',
-                }
+                },
+                json: true
             };
             request(options, function (error, response, body) {
                 if (error) {
