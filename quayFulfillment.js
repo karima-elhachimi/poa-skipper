@@ -23,7 +23,7 @@ module.exports = class QuayFulfillment extends ApicsRequest  {
         return this.requestApicsData(url)
         .then(res => {
             console.log(`#requestApicsData response: ${res}`);
-            return this.formatAvailableQuay(JSON.parse(res));
+            return this.formatAvailableQuay(res);
         })
         .catch(e => console.log(`#requestApicsData couldn't get availableQuays. Error: ${e}`))
     }
@@ -37,7 +37,7 @@ module.exports = class QuayFulfillment extends ApicsRequest  {
     }
     
     formatQuayInfo(quay){
-        let response =  `Kaainummer ${JSON.parse(quay).quayNumber} `;
+        let response =  `Kaainummer ${quay.quayNumber} `;
         let available = false;
         if(quay.status == 'available') {
             available = true
