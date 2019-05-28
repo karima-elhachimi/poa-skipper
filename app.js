@@ -143,7 +143,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
     let city = agent.parameters.paramLocatie;
     return nauticalFulfiller.respondWithNauticalWeatherForecastByLocation(city, 'all')
       .then(nautischeData => {
-        console.log(`json parse data: ${nautischeData.data.hours[0]}`)
+        console.log(`json parse data: ${nautischeData}`)
         let text = nauticalFulfiller.formatWeatherForecast(nautischeData.data.hours[0]);
         console.log(`response: ${text}`);
         agent.add(text);

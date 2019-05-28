@@ -104,7 +104,8 @@ module.exports = class NauticalFulfillment extends FulFill {
         return axios.get(url, {
             headers: {
                 'Authorization': this.weatherApiKey,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'responseType': 'json'
             }
         })
         .catch(e => {
