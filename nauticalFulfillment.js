@@ -115,7 +115,7 @@ module.exports = class NauticalFulfillment extends FulFill {
                     throw new Error(error)
                 }
                 console.log(`to be resolved: ${body}`);
-                resolve(body);
+                resolve(body.json());
             });
         })
     }
