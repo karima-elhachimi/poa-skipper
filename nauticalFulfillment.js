@@ -102,20 +102,21 @@ module.exports = class NauticalFulfillment extends FulFill {
             var options = {
                 method: 'GET',
                 url: url,
+                json: true,
                 headers:
                 {
                     'Authorization': this.weatherApiKey,
                     'Content-Type': 'application/json',
                 },
-                json: true
+                
             };
             request(options, function (error, response, body) {
                 if (error) {
                     reject(error);
                     throw new Error(error)
                 }
-                console.log(`to be resolved: ${body}`);
-                resolve(body.json());
+                console.log(`to be resolved: ${body.hours}`);
+                resolve(body);
             });
         })
     }
