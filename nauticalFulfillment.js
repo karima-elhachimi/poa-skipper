@@ -42,6 +42,29 @@ module.exports = class NauticalFulfillment extends FulFill {
         })
 
     }
+
+    respondWithNauticalWeatherData(agent) {
+        console.log('#respondWithNauticalWeatherData started');
+        let city = agent.parameters.paramLocatie;
+        console.log(`city: ${city}`)
+        return this.requestLatandLonData(city)
+            .then(latlon => {
+                let nauticalWeatherParams = this.createNauticalParams('all'); //https://docs.stormglass.io/#point-request
+
+                //todo: url samenstellen voor het zoeken met createNauticalParams @low
+                //let nauticalWeatherParams = "airTemperature,windSpeed" //https://docs.stormglass.io/#point-request
+                let path = this.createNauticalSearchPath(latlon[0], latlon[1], nauticalWeatherParams)
+                let url = this.getFullUrl(path, this.weatherHost);
+                console.log(`#respondWithNauticalWeatherdata url: ${url}`);
+                return axios.get(url, {
+                    headers: {
+                        'Authorization': this.weatherApiKey,
+                        'Content-Type': 'application/json'
+                    }
+                })
+            })
+    } 
+   
     respondWithNauticalWeatherForecastByLocation(city, params) {
         console.log(`city: ${city}`)
         return this.requestLatandLonData(city)

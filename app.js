@@ -140,7 +140,8 @@ app.post('/fulfillment', express.json(), (request, response) => {
   let agent = new WebhookClient({ request: request, response: response });
 
   function nauticalForecast(agent) {
-    return nauticalFulfiller.respondWithNauticalWeatherData(agent)
+    let city = agent.parameters.paramLocatie;
+    return nauticalFulfiller.respondWithNauticalWeatherForecastByLocation(city, 'all')
       .then(nautischeData => {
         console.log(`json parse data: ${nautischeData.data.hours[0]}`)
         let text = nauticalFulfiller.formatWeatherForecast(nautischeData.data.hours[0]);
