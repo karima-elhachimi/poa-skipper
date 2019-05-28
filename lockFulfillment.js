@@ -1,4 +1,5 @@
 const ApicsRequest = require('./apicsRequestHandler')
+const moment = require('moment');
 
 module.exports = class LockFulfillment extends ApicsRequest  {
 
