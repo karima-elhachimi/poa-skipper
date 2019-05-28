@@ -145,7 +145,8 @@ app.post('/fulfillment', express.json(), (request, response) => {
     return nauticalFulfiller.respondWithNauticalWeatherForecastByLocation(city, 'all')
     .then(forecast => {
       console.log(`returned forecast is ${forecast}`);
-      agent.add(`forecast: ${forecast.hours[0].airTemperature[0].value}`);
+      const text = nauticalFulfiller.formatWeatherForecast(forecast.hours[0]);
+      agent.add(`Het nautisch weerbericht voor ${city} is ${text}`);
     })
     /* return nauticalFulfiller.respondWithNauticalWeatherForecastByLocation(city, 'all')
       .then(nautischeData => {
