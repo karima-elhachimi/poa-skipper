@@ -56,7 +56,7 @@ module.exports = class QuayFulfillment extends ApicsRequest  {
             //todo: herformateren dat er gechecked wordt of er wel degelijk een beschikbaar van tot veld is
             const from = moment(quay.availableFrom).format('LTS');
             const till = moment(quay.availableTill).format('LTS')
-            response += `\n\nKaainr: ${quay.quayNumber}, beschikbaar van ${from} tot ${till}. \nContact: ${quay.contact}`
+            response += `\n\n**Kaainr: ${quay.quayNumber}, beschikbaar van ${from} tot ${till}. \nContact: ${quay.contact}`
         });
         response += `\n\nVergeet niet om een verantwoordelijke te contacteren om een reservatie te regelen.`
         return response;
