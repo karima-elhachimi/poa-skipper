@@ -65,7 +65,7 @@ module.exports = class NauticalFulfillment extends FulFill {
         console.log(`city: ${city}`)
         return this.requestLatandLonData(city)
             .then(latlon => {
-                this.respondWithNauticalWeatherForecastByPosition(latlon, params);
+                return this.respondWithNauticalWeatherForecastByPosition(latlon, params);
             })
     } 
 
