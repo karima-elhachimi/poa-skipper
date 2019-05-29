@@ -80,6 +80,7 @@ app.get('/forecast/location/:location', (req, res) => {
     nautical.respondWithNauticalWeatherForecastByLocation(req.params.location, 'all')
       .then(weatherData => {
         console.log(`returned weatherData: ${weatherData}`);
+        weatherData.location = req.params.location
         res.send(weatherData)
        /*  res.json({
           visibility: "NA",
@@ -108,13 +109,13 @@ app.get('/forecast/position/:position', (req, res) => {
     nauticalFulfiller.respondWithNauticalWeatherForecastByPosition(pos, 'all')
       .then(weatherData => {
         console.log(`returned weatherData: ${nauticalFulfiller.formatWeatherForecast(weatherData)}`);
-        //res.send(weatherData);
-        res.json({
+        res.send(weatherData);
+       /*  res.json({
           visibility: "NA",
           windForce: "NA",
           windDirection: "NA",
           waterLevel: "NA"
-        });
+        }); */
       });
   } catch (err) {
     console.log(`get forecast by position error: ${err}`);

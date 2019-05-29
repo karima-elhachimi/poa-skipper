@@ -79,6 +79,7 @@ module.exports = class LockFulfillment extends ApicsRequest  {
     }
 
     formatLockExecutions(executions){
+
         let format = '';
         executions.forEach(execution => {
             format +=   `richting: ${execution.direction},

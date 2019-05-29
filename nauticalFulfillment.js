@@ -115,7 +115,7 @@ module.exports = class NauticalFulfillment extends FulFill {
                     reject(error);
                     throw new Error(error)
                 }
-                console.log(`to be resolved: ${body.hours[0].airTemperature[0].value}`);
+                console.log(`to be resolved: ${body}`);
                 resolve(body);
             });
         })
