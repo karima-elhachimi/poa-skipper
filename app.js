@@ -65,7 +65,7 @@ app.get('/tides/location/:location', (req, res) => {
 app.get('/tides/position/:position', (req, res) => {
   const pos = req.params.position.split(",");
   try {
-    nautical.requestTidalData(pos)
+    nauticalFulfiller.requestTidalData(pos)
     .then(tide => {
       res.send(tide);
     });
@@ -77,7 +77,7 @@ app.get('/tides/position/:position', (req, res) => {
 
 app.get('/forecast/location/:location', (req, res) => {
   try {
-    nautical.respondWithNauticalWeatherForecastByLocation(req.params.location, 'all')
+    nauticalFulfiller.respondWithNauticalWeatherForecastByLocation(req.params.location, 'all')
       .then(weatherData => {
         console.log(`returned weatherData: ${weatherData}`);
         weatherData.location = req.params.location

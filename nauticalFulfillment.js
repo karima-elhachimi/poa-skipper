@@ -43,6 +43,8 @@ module.exports = class NauticalFulfillment extends FulFill {
 
     }
 
+    
+
     respondWithNauticalWeatherData(agent) {
         console.log('#respondWithNauticalWeatherData started');
         let city = agent.parameters.paramLocatie;
