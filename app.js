@@ -116,7 +116,7 @@ app.get('/forecast/position/:position', (req, res) => {
     nauticalFulfiller.respondWithNauticalWeatherForecastByPosition(pos, 'all')
       .then(weatherData => {
         console.log(`returned weatherData: ${weatherData.hours[0]}`);
-        res.send(nauticalFulfiller.createForecastObject(weatherData.hours[0]);
+        res.send(nauticalFulfiller.createForecastObject(weatherData.hours[0]));
        /*  res.json({
           visibility: "NA",
           windForce: "NA",
