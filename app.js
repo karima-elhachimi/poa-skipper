@@ -50,9 +50,9 @@ app.get('/chat/init', (req, res) => {
 app.get('/tides/location/:location', (req, res) => {
   //todo: raar, refactor!
   try {
-    nautical.requestLatandLonData(req.params.location)
+    nauticalFulfiller.requestLatandLonData(req.params.location)
     .then(position => {
-      nautical.requestTidalData(position)
+      nauticalFulfiller.requestTidalData(position)
         .then(tide => {
           res.send(tide);
         });
