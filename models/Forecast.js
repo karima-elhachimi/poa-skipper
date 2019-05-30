@@ -1,13 +1,11 @@
 
 module.exports = class Forecast {
-  location;
-
-    constructor ( visibility,  windForce, windDirection, waterlevel, location) {
+    constructor ( visibility,  windForce, windDirection, waterlevel) {
       this.visibility = visibility;
       this. windForce =  windForce;
       this.windDirection = windDirection;
       this.waterlevel = waterlevel;
-      this.location = location;
+      this.location = '';
     }
   }
   
