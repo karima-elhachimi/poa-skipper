@@ -1,5 +1,4 @@
 const URL = require('url').URL;
-const axios = require('axios');
 
 module.exports = class Fulfill {
 
@@ -17,19 +16,27 @@ module.exports = class Fulfill {
         return `/search?q=${city}&format=json&limit=1`;
     }
     requestLatandLonData(location) {
-        
         let url = this.getFullUrl(this.createLatAndLongSearchParams(location), this.geoHost);
         console.log(`#requestLatandLonData url: ${url}`);
-
-        return axios.get(url)
-            .then(res => {
-                console.log(`lat lon response: ${JSON.parse(res.data[0].lat)}`);
-                return [JSON.parse(res.data[0].lat), JSON.parse(res.data[0].lon)];
-            })
-            .catch(e => {
-                console.log(`getting lat and lon data failed, error: ${e}`);
-                return e;
-            })
+        return new Promise((resolve, reject) => {
+            var options = {
+                method: 'GET',
+                url: url,
+                headers:
+                {
+                    'Content-Type': 'application/json',
+                },
+                json: true
+            };
+            request(options, function (error, response, body) {
+                if (error) {
+                    reject(error);
+                    throw new Error(error)
+                }
+                console.log(`lat lon response: ${body.data[0].lat}`);
+                resolve([ body.data[0].lat, body.data[0].lon]);
+            });
+        });
     }
 
     

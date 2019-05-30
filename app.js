@@ -22,7 +22,6 @@ app.use(allowCrossDomain);
 // dialogflow
 
 const { WebhookClient } = require('dialogflow-fulfillment')
-const { Card, Suggestion } = require('dialogflow-fulfillment')
 
 const admin = require('firebase-admin')
 process.env.DEBUG = 'dialogflow:debug' // enables lib debugging statements
