@@ -88,17 +88,12 @@ app.get('/forecast/location/:location', (req, res) => {
       .then(weatherData => {
         console.log(`returned weatherData: ${weatherData}`);
         weatherData.location = req.params.location
-        res.send(weatherData)
-       /*  res.json({
-          visibility: "NA",
-          windForce: "NA",
-          windDirection: "NA",
-          waterLevel: "NA"
-        }); */
+        res.send(weatherData.hours[0])
       });
   } catch (err) {
     console.log(`get location went wrong error: ${err}`);
     res.json({
+      location: "NA",
       visibility: "NA",
       windForce: "NA",
       windDirection: "NA",
@@ -117,15 +112,17 @@ app.get('/forecast/position/:position', (req, res) => {
       .then(weatherData => {
         console.log(`returned weatherData: ${weatherData.hours[0]}`);
         res.send(nauticalFulfiller.createForecastObject(weatherData.hours[0]));
-       /*  res.json({
-          visibility: "NA",
-          windForce: "NA",
-          windDirection: "NA",
-          waterLevel: "NA"
-        }); */
+       
       });
   } catch (err) {
     console.log(`get forecast by position error: ${err}`);
+    res.json({
+      location: "NA",
+      visibility: "NA",
+      windForce: "NA",
+      windDirection: "NA",
+      waterLevel: "NA"
+    });
   }
 });
 
