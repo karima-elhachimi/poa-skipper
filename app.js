@@ -87,8 +87,9 @@ app.get('/forecast/location/:location', (req, res) => {
     nauticalFulfiller.respondWithNauticalWeatherForecastByLocation(req.params.location, 'all')
       .then(weatherData => {
         console.log(`returned weatherData: ${weatherData}`);
-        weatherData.location = req.params.location
-        res.send(weatherData.hours[0])
+        const fc = nauticalFulfiller.createForecastObject(weatherData.hours[0]);
+        fc.location = req.params.location
+        res.send(fc)
       });
   } catch (err) {
     console.log(`get location went wrong error: ${err}`);
@@ -111,7 +112,9 @@ app.get('/forecast/position/:position', (req, res) => {
     nauticalFulfiller.respondWithNauticalWeatherForecastByPosition(pos, 'all')
       .then(weatherData => {
         console.log(`returned weatherData: ${weatherData.hours[0]}`);
-        res.send(nauticalFulfiller.createForecastObject(weatherData.hours[0]));
+        const fc = nauticalFulfiller.createForecastObject(weatherData.hours[0]);
+        fc.location = "by position"
+        res.send(fc)
        
       });
   } catch (err) {
