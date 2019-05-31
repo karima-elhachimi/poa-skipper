@@ -47,7 +47,7 @@ const lockFulfiller = new LockFulfiller();
 
 //todo: implement initial hello
 app.get('/chat/init', (req, res) => {
-  dfAgent.sendTextMessageToDialogFlow('hello', 'localhost')
+  dfAgent.sendTextMessageToDialogFlow('hallo', 'localhost')
     .then(answer => {
       res.json(answer)
     })
