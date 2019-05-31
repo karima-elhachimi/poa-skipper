@@ -1,4 +1,5 @@
 const URL = require('url').URL;
+const request = require('request');
 
 module.exports = class Fulfill {
 
