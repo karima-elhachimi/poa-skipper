@@ -34,8 +34,8 @@ module.exports = class Fulfill {
                     reject(error);
                     throw new Error(error)
                 }
-                console.log(`lat lon response: ${body.data[0].lat}`);
-                resolve([ body.data[0].lat, body.data[0].lon]);
+                console.log(`lat lon response: ${body[0]}`);
+                resolve([ body[0].lat, body[0].lon]);
             });
         });
     }
