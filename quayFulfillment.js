@@ -29,7 +29,10 @@ module.exports = class QuayFulfillment extends ApicsRequest  {
     }
 
     requestQuayInformationById(quaynumber) {
-        let url = this.getFullUrl(this.createQuayPath(quaynumber), this.apicsHost);
+        //tijdelijk met harcoded url, nog niet alle apics endpoints werken
+        let url = `https://apps-dev.portofantwerp.com/apics-apica/api/v1/chatbot/apics/quay/${quayNumber}`;
+    //als alle endpoints werken, dit terug gebruiken
+        //let url = this.getFullUrl(this.createQuayPath(quaynumber), this.apicsHost);
         return this.requestApiData(url).then(res => {
             console.log(`requestQuayInfo data response: ${res.quayNumber}`);
             return this.formatQuayInfo(res);

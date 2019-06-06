@@ -19,7 +19,6 @@ module.exports = class DialogFlow {
 
     this.sessionClient = new dialogflow.SessionsClient(config)
 
-    //console.log(`class DialogFlow: privateKey: ${privateKey}`);
   }
 
 
@@ -54,8 +53,5 @@ module.exports = class DialogFlow {
     return message;
   }
 
-  createUnpromptedWelcomeMessage(data){
-    let message = this.createMessage(data);
-    //todo: payload met opties toevoegen aan message voor weergave in skipper
-  }
+  
 }

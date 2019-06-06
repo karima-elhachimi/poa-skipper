@@ -53,6 +53,7 @@ app.get('/chat/init', (req, res) => {
     })
 })
 
+/** Endpoint voor het opvragen van het getij adv locatie. */
 app.get('/tides/location/:location', (req, res) => {
   //todo: raar, refactor!
   try {
@@ -68,6 +69,7 @@ app.get('/tides/location/:location', (req, res) => {
   }
 })
 
+//** Endpoint voor het opvragen van het getij adv geografische positie. */
 app.get('/tides/position/:position', (req, res) => {
   const pos = req.params.position.split(",");
   try {
@@ -80,7 +82,7 @@ app.get('/tides/position/:position', (req, res) => {
   }
 })
 
-
+/** Endpoint voor het opvragen van het nautisch weerbericht adv locatie. */
 app.get('/forecast/location/:location', (req, res) => {
   try {
     nauticalFulfiller.respondWithNauticalWeatherForecastByLocation(req.params.location, 'all')
@@ -104,6 +106,7 @@ app.get('/forecast/location/:location', (req, res) => {
   }
 });
 
+/** Endpoint voor het opvragen van het nautisch weerbericht adv geografische positie. */
 app.get('/forecast/position/:position', (req, res) => {
   console.log(`req text: ${req.params.position}`);
   const pos = req.params.position.split(",");
@@ -128,6 +131,7 @@ app.get('/forecast/position/:position', (req, res) => {
   }
 });
 
+/** Endpoint voor het ontvangen van de chat input vanuit de Angular app. */
 app.get('/chat/:text', (req, res) => {
   dfAgent.sendTextMessageToDialogFlow(req.params.text, "localhost")
     .then(answer => {
@@ -142,7 +146,7 @@ app.get('/chat/:text', (req, res) => {
 app.get('/', (req, res) => res.send('online'))
 
 
-
+/** Endpoint voor het ontvangen van de fulfillment requests vanuit Dialogflow. */
 app.post('/fulfillment', express.json(), (request, response) => {
   let agent = new WebhookClient({ request: request, response: response });
 
@@ -232,7 +236,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
 
   //todo: add option to clear message history on firestore
 
-  // Run the proper function handler based on the matched Dialogflow intent name
+/** Intenties worden gekoppeld aan de functies dat dienen uitgevoerd te worden. */
   let intentMap = new Map()
 
   intentMap.set('nautisch.algemeen', nauticalForecast);
