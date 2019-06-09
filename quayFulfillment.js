@@ -3,7 +3,6 @@ const moment = require('moment');
 
 module.exports = class QuayFulfillment extends ApicsRequest  {
     constructor(){
-
         super();
     }
 
@@ -25,7 +24,10 @@ module.exports = class QuayFulfillment extends ApicsRequest  {
             console.log(`#requestApicsData response: ${res}`);
             return this.formatAvailableQuay(res);
         })
-        .catch(e => console.log(`#requestApicsData couldn't get availableQuays. Error: ${e}`))
+        .catch(e => {
+            console.log(`#requestApicsData couldn't get availableQuays. Error: ${e}`)
+            return `Er is iets misgelopen, of er zijn geen beschikbare ligplaatsen gevonden. Probeer later opnieuw.`;
+        });
     }
 
     requestQuayInformationById(quaynumber) {
@@ -33,7 +35,11 @@ module.exports = class QuayFulfillment extends ApicsRequest  {
         return this.requestApiData(url).then(res => {
             console.log(`requestQuayInfo data response: ${res.quayNumber}`);
             return this.formatQuayInfo(res);
-        })     
+        })
+        .catch(e => {
+            console.log(`#requestQuayInformationById error: ${e}`);
+            return `Gevraagde kaainummer kon niet worden herkend of bestaat niet. Excuses!`;
+        });
     }
     
     formatQuayInfo(quay){

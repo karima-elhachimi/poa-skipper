@@ -69,6 +69,10 @@ module.exports = class NauticalFulfillment extends FulFill {
             .then(latlon => {
                 return this.respondWithNauticalWeatherForecastByPosition(latlon, params);
             })
+            .catch(e => {
+                console.log(`#requestLatandLondData error: ${e}`);
+                return e;
+            })
     } 
 
     respondWithNauticalWeatherForecastByPosition(position, params) {
@@ -79,7 +83,12 @@ module.exports = class NauticalFulfillment extends FulFill {
         .then(forecast => {
             console.log(`raw forecast: ${forecast}`);
             return forecast;
-        });
+        })
+        .catch(e => {
+            console.log(`#requestWeatherForecast error: ${e}`);
+            return e;
+
+        })
     }
 
     
@@ -165,7 +174,6 @@ module.exports = class NauticalFulfillment extends FulFill {
         const sw = `ZW`;
         const w = `W`;
         const nw = `NW`;
-
 
         if( wd < interval && wd > (360 - interval) ){
             return n;

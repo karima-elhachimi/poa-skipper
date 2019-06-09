@@ -158,6 +158,8 @@ app.post('/fulfillment', express.json(), (request, response) => {
       console.log(`returned forecast is ${forecast}`);
       const text = nauticalFulfiller.formatWeatherForecast(forecast.hours[0]);
       agent.add(`Hierbij het nautisch weerbericht voor ${city}: ${text}`);
+    }, err => {
+      agent.add(err);
     });
   }
 
@@ -174,8 +176,10 @@ app.post('/fulfillment', express.json(), (request, response) => {
     console.log(`get lock details for ${lockName}`);
     return lockFulfiller.respondWithLockInformation(lockName).then(res => {
       agent.add(`${res.lockName} heeft een status van ${res.status}.`);
-
-    })
+    }).catch(e => {
+      console.log(`#lockDetails error: ${e}`);
+      agent.add(`Ophalen van de sluistoestand liep mis, probeer later nog eens. Sorry voor het ongemak.`);
+    });
   }
 
   function allLocks(agent) {
@@ -184,7 +188,7 @@ app.post('/fulfillment', express.json(), (request, response) => {
         console.log(`request all locks response: ${locks}`);
         let text = lockFulfiller.formatLocks(locks);
         agent.add(`Alle sluizen in Antwerpen en hun statussen:\n ${text}`);
-      }, er => console.log(er)).catch(err => agent.add(`Er is iets misgegaan bij het ophalen van de sluizen. error: ${err}`));
+      }, er => console.log(er)).catch(err => agent.add(`Er is iets misgegaan bij het ophalen van de sluizen. Probeer later opnieuw!`));
   }
 
   function respondWithUnavailableLocks() {
@@ -196,14 +200,18 @@ app.post('/fulfillment', express.json(), (request, response) => {
         } else {
           agent.add('All sluizen zijn beschikbaar');
         }
-
-      })
+      }, err => {
+        agent.add(`Ik kan momenteel niet achterhalen welke sluizen er onbeschikbaar zijn. Probeer later opnieuw, mijn excuses!`);
+      });
   }
 
   function executionDetails(agent) {
     let lock = agent.parameters.paramSluis;
     return lockFulfiller.requestLockExecutionDetail(lock).then(res => {
       agent.add(`Details voor de eerstvolgende schutting van ${lock}: ${res[0]}`)
+    }, err => {
+      console.log(`#executionDetails error: ${err}`);
+      agent.add(`Ik kan de eerstvolgende schutting voor ${lock} momenteel niet ophalen. Mijn excuses!`);
     })
   }
 
@@ -218,6 +226,9 @@ app.post('/fulfillment', express.json(), (request, response) => {
           agent.context.set('informatieligplaats-alternatief', 5)
           agent.add(res[0]);
         }
+      }, err => {
+        console.log(`#respondWithQuayInfo error: ${err}`);
+        agent.add(`Ik kon geen informatie opvragen over ${quaynr}. Wellicht bestaat het niet of is de informatie tijdelijk onbeschikbaar.`);
       })
   }
 
@@ -225,11 +236,13 @@ app.post('/fulfillment', express.json(), (request, response) => {
   function respondWithAvailableQuays(agent) {
     const location = agent.parameters.paramDok ? agent.parameters.paramDok : null;
     console.log(`responding with quays nearest to: ${location}`);
-
     return quayFulfiller.requestAvailableQuays(location)
       .then(res => {
         console.log(`#respondWithAvailableQuay: ${res}`);
         agent.add(`Volgende kaainummers zijn de komende 12u beschikbaar: \n\n ${res}`);
+      }, err => {
+        console.log(`#respondWithAvailableQuays`);
+        agent.add(err);
       })
   }
 
