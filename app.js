@@ -61,7 +61,6 @@ app.get('/apics/lock/:lockId', (req, res) => {
 });
 
 app.get('/apics/locks', (req, res) => {
-
   var options = { method: 'GET',
   url: 'https://apps-dev.portofantwerp.com/apics-apica/api/v1/chatbot/apics/locks',
   headers: 
@@ -80,7 +79,8 @@ request(options, function (error, response, body) {
   res.json(body);
 });
 
-});
+
+  
   
 
 });
