@@ -29,13 +29,18 @@ module.exports = class ApicsRequestHandler extends Fulfill {
             };
             request(options, function (error, response, body) {
                 if (error) {
-                    reject(error);
                     console.log(`request error: ${error}`);
+                    reject(error);
+                    
                     throw new Error(error)
                 }
                 console.log(`to be resolved: ${body}`);
                 resolve(body);
             });
         })
+    }
+
+    requestApicsData(path){
+
     }
 }
