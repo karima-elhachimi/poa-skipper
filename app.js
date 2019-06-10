@@ -17,7 +17,6 @@ const allowCrossDomain = function(req, res, next) {
     next();
   }
 };
-app.use(cors());
 app.use(allowCrossDomain);
 
 // dialogflow
