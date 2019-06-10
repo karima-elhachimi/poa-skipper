@@ -61,50 +61,24 @@ app.get('/apics/lock/:lockId', (req, res) => {
 });
 
 app.get('/apics/locks', (req, res) => {
-  
+  var http = require('http');
+  var options = {
+    host: 'apps-dev.portofantwerp.com',
+    port: '',
+    path: '/apics-apica/api/v1/chatbot/apics/locks'
+  };
 
-  var http = require("https");
+  http.get(options, function (res) {
+    console.log("Got response: " + res.statusCode);
 
-var options = {
-  "method": "GET",
-  "hostname": "apps-dev.portofantwerp.com"
-  ,
-  "path": [
-    "apics-apica",
-    "api",
-    "v1",
-    "chatbot",
-    "apics",
-    "locks"
-  ],
-  "headers": {
-    "User-Agent": "PostmanRuntime/7.13.0",
-    "Accept": "*/*",
-    "Cache-Control": "no-cache",
-    "Host": "apps-dev.portofantwerp.com",
-    "cookie": "48c1e3ebb7dfc253784b4abc445639ed=ba8e7b4652eee227cc65f25b4fdadb0e; BIGipServerp_amber_7777=2697074860.24862.0000",
-    "accept-encoding": "gzip, deflate",
-    "Connection": "keep-alive",
-    "cache-control": "no-cache"
-  }
-};
-
-var req = http.request(options, function (res) {
-  var chunks = [];
-
-  res.on("data", function (chunk) {
-    chunks.push(chunk);
+    res.on("data", function (chunk) {
+      console.log("BODY: " + chunk);
+      res.json(body);
+    });
+  }).on('error', function (e) {
+    console.log("Got error: " + e.message);
   });
 
-  res.on("end", function () {
-    var body = Buffer.concat(chunks);
-    console.log(body.toString());
-    res.json(body);
-  });
-});
-
-req.end();
-  
 
 });
 
