@@ -63,7 +63,7 @@ app.get('/apics/lock/:lockId', (req, res) => {
 app.get('/apics/locks', (req, res) => {
   var http = require('http');
   var options = {
-    family: 4,
+    family: 6,
     host: 'apps-dev.portofantwerp.com',
     port: '',
     path: '/apics-apica/api/v1/chatbot/apics/locks'
