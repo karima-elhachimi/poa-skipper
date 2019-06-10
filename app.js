@@ -64,7 +64,7 @@ app.get('/apics/lock/:lockId', (req, res) => {
 app.get('/apics/locks', (req, res) => {
 
   //get all locks of antwerp
- request.get('https://apps-dev.portofantwerp.com/apics-apica/api/v1/chatbot/apics/locks').then(locks => {
+ request.get('https://apps-dev.portofantwerp.com/apics-apica/api/v1/chatbot/apics/locks').promise().then(locks => {
     res.json(locks);
   }).catch(e => {
     console.log(`getting locks failed, error: ${e}`);
