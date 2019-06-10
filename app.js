@@ -45,13 +45,81 @@ const quayFulfiller = new QuayFulfiller();
 const LockFulfiller = require('./lockFulfillment');
 const lockFulfiller = new LockFulfiller();
 
-//todo: implement initial hello
+/** Endpoint voor het opvragen van initieel skipper bericht. */
 app.get('/chat/init', (req, res) => {
   dfAgent.sendTextMessageToDialogFlow('hallo', 'localhost')
     .then(answer => {
       res.json(answer)
     })
-})
+});
+
+/** Endpoints voor het opvragen van sluis gerelateerde data. */
+app.get('/apics/lock/:lockId', (req, res) => {
+
+  
+  res.json(lock);
+
+});
+
+app.get('/apics/locks', (req, res) => {
+
+  //get all locks of antwerp
+  lockFulfiller.requestAllLocks().then(locks => {
+    res.json(locks);
+
+  }).catch(e => {
+    console.log(`getting locks failed, error: ${e}`);
+    res.status(404);
+  });
+  
+
+});
+
+app.get('/apics/lockexecutions/:lockCode', (req, res) => {
+
+  //get all lockexecutions for a lock by lockcode
+  lockFulfiller.requestLockExecutions(req.params.lockCode).then( execs => {
+    res.json(execs);
+  }).catch(e => {
+
+    console.log(`getting executions failed, error: ${e}`);
+    res.status(404);
+
+  })
+  
+
+});
+
+app.get('/apics/lockexecution/:lockExecutionId', (req, res) => {
+
+  // find lockexecution by id
+  const lock = readJsonFromFile('./stubs/lockExecution.json');
+  res.json(lock);
+
+});
+
+app.get('/apics/quay/:quaynumber', (req, res) => {
+  //get quay details by quaynumber 
+  const quay = readJsonFromFile('./stubs/quay.json');
+  res.json(quay);
+});
+
+
+
+app.get('/apics/quays', (req, res) => {
+
+// get 3 most recent available
+  const quays = readJsonFromFile('./stubs/availableQuays.json');
+  res.json(quays);
+});
+
+app.get('/apics/quays/:location', (req, res) => {
+
+  //get all quays within a radius from a location
+  const quays = readJsonFromFile('./stubs/availableQuays.json');
+  res.json(quays);
+});
+
 
 /** Endpoint voor het opvragen van het getij adv locatie. */
 app.get('/tides/location/:location', (req, res) => {
