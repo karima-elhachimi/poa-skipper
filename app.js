@@ -67,11 +67,8 @@ app.get('/apics/locks', (req, res) => {
 
 var options = {
   "method": "GET",
-  "hostname": [
-    "apps-dev",
-    "portofantwerp",
-    "com"
-  ],
+  "hostname": "apps-dev.portofantwerp.com"
+  ,
   "path": [
     "apics-apica",
     "api",
