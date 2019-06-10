@@ -1,6 +1,5 @@
 'use strict'
 const express = require('express');
-const cors = require('cors');
 const request = require('request');
 const app = express()
 
@@ -64,7 +63,7 @@ app.get('/apics/lock/:lockId', (req, res) => {
 app.get('/apics/locks', (req, res) => {
 
   //get all locks of antwerp
- request.get('https://apps-dev.portofantwerp.com/apics-apica/api/v1/chatbot/apics/locks').promise().then(locks => {
+ request.get('http://apps-dev.portofantwerp.com/apics-apica/api/v1/chatbot/apics/locks').promise().then(locks => {
     res.json(locks);
   }).catch(e => {
     console.log(`getting locks failed, error: ${e}`);
