@@ -118,6 +118,15 @@ app.get('/forecast/position/:position', (req, res) => {
         fc.location = "by position"
         res.send(fc)
        
+      }, e => {
+        console.log(`#respondWithNauticalWeatherForecastByPos.. error: ${e}`);
+        res.send({
+          location: "NA",
+          visibility: "NA",
+          windForce: "NA",
+          windDirection: "NA",
+          waterLevel: "NA"
+        });
       });
   } catch (err) {
     console.log(`get forecast by position error: ${err}`);
