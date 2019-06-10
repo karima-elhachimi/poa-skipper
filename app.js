@@ -62,12 +62,24 @@ app.get('/apics/lock/:lockId', (req, res) => {
 
 app.get('/apics/locks', (req, res) => {
 
-  //get all locks of antwerp
- request('http://apps-dev.portofantwerp.com/apics-apica/api/v1/chatbot/apics/locks', (error, response, body) => {
-  console.log('error:', error); // Print the error if one occurred
-  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-  console.log('body:', body); // Print the HTML for the Google homepage.
+  var options = { method: 'GET',
+  url: 'https://apps-dev.portofantwerp.com/apics-apica/api/v1/chatbot/apics/locks',
+  headers: 
+   { 'cache-control': 'no-cache',
+     Connection: 'keep-alive',
+     'accept-encoding': 'gzip, deflate',
+     cookie: '48c1e3ebb7dfc253784b4abc445639ed=ba8e7b4652eee227cc65f25b4fdadb0e; BIGipServerp_amber_7777=2697074860.24862.0000',
+     Host: 'apps-dev.portofantwerp.com',
+     'Cache-Control': 'no-cache',
+     Accept: '*/*'} };
+
+request(options, function (error, response, body) {
+  if (error) throw new Error(error);
+
+  console.log(body);
   res.json(body);
+});
+
 });
   
 
