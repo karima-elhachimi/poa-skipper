@@ -63,12 +63,12 @@ app.get('/apics/lock/:lockId', (req, res) => {
 app.get('/apics/locks', (req, res) => {
 
   //get all locks of antwerp
- request.get('http://apps-dev.portofantwerp.com/apics-apica/api/v1/chatbot/apics/locks').promise().then(locks => {
-    res.json(locks);
-  }).catch(e => {
-    console.log(`getting locks failed, error: ${e}`);
-    res.status(404);
-  });
+ request('http://apps-dev.portofantwerp.com/apics-apica/api/v1/chatbot/apics/locks', (error, response, body) => {
+  console.log('error:', error); // Print the error if one occurred
+  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+  console.log('body:', body); // Print the HTML for the Google homepage.
+  res.json(body);
+});
   
 
 });
