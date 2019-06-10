@@ -64,7 +64,7 @@ app.get('/apics/lock/:lockId', (req, res) => {
 app.get('/apics/locks', (req, res) => {
 
   //get all locks of antwerp
-  lockFulfiller.requestAllLocks().then(locks => {
+  lockFulfiller.requestApiData('https://apps-dev.portofantwerp.com/apics-apica/api/v1/chatbot/apics/locks').then(locks => {
     res.json(locks);
 
   }).catch(e => {
